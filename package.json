@@ -1,21 +1,22 @@
 {
-  "name": "EmuSAK",
-  "productName": "EmuSAK",
-  "version": "2.1.9",
-  "description": "This is a tool to manage your switch emulators, such as downloading saves or mods",
-  "repository": "https://github.com/CapitaineJSparrow/emusak-ui",
+  "name": "RyuSAK",
+  "productName": "RyuSAK",
+  "version": "1.0.0",
+  "description": "RyuSAK",
+  "repository": "https://github.com/Ecks1337/RyuSAK",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish-dry-run": "electron-forge publish --dry-run\n",
+    "publish-dry-run": "electron-forge publish --dry-run",
     "publish-from-dry-run": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx .",
-    "prepare": "husky install"
+    "lint": "eslint --ext .ts,.tsx ."
   },
-  "keywords": [],
-  "author": "CapitaineJSparrow",
+  "author": "Ecks1337",
+  "contributors": [
+    "CapitaineJSparrow"
+  ],
   "license": "GPL-3.0",
   "config": {
     "forge": "./forge.config.js"

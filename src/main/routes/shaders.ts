@@ -37,7 +37,7 @@ const asyncReadRyujinxProcess = async (ryuBinPath: string): Promise<any> => new 
   } catch(e) {
     dialog.showMessageBox({
       title: "Error",
-      message: "Cannot launch Ryujinx, please redo the same but launch Emusak as admin. Probably antivirus is preventing EmuSAK to launch Ryujinx.",
+      message: "Cannot launch Ryujinx, please redo the same but launch RyuSAK as admin. Probably antivirus is preventing RyuSAK to launch Ryujinx.",
       type: "error",
       buttons: ["Ok"],
     });
@@ -165,7 +165,7 @@ export const installShaders = async (mainWindow: BrowserWindow, ...args: install
 };
 
 export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShaders) => {
-  const [titleId, dataPath, localCount, emusakCount] = args;
+  const [titleId, dataPath, localCount, ryusakCount] = args;
 
   const guestTocFile = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "guest.toc");
 
@@ -242,7 +242,7 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
     return { error: true, code: "SHARE_UPLOAD_FAIL" };
   }
 
-  const message = `Hey there, I'm sharing my shaders using EmuSAK v${app.getVersion()} for **${metadata.title || metadata.titleId}** v${result.ranTitleVersion} (${titleId.toUpperCase()}). I have ${localCount} shaders while EmuSAK has ${emusakCount} shaders. Download them from here : \`${Buffer.from((res as any).data.file.url.short).toString("base64")}\``;
+  const message = `Hey there, I'm sharing my shaders using RyuSAK v${app.getVersion()} for **${metadata.title || metadata.titleId}** v${result.ranTitleVersion} (${titleId.toUpperCase()}). I have ${localCount} shaders while RyuSAK has ${ryusakCount} shaders. Download them from here : \`${Buffer.from((res as any).data.file.url.short).toString("base64")}\``;
   await HttpService.postMessage(message);
   return true;
 };

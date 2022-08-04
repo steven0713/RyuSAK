@@ -1,5 +1,5 @@
 import { GetState, SetState } from "zustand/vanilla";
-import { EmusakMods, EmusakSaves, EmusakShaders, LS_KEYS, Settings } from "../../types";
+import { RyusakMods, RyusakSaves, RyusakShaders, LS_KEYS, Settings } from "../../types";
 import { IDownloadManager } from "./downloadManager.action";
 import useTranslation from "../i18n/I18nService";
 import { invokeIpc } from "../utils";
@@ -8,9 +8,9 @@ const { t } = useTranslation();
 
 interface IBootstrap {
   isAppInitialized: boolean;
-  saves: EmusakSaves;
-  mods: EmusakMods;
-  ryujinxShaders: EmusakShaders;
+  saves: RyusakSaves;
+  mods: RyusakMods;
+  ryujinxShaders: RyusakShaders;
   bootstrapAppAction: () => Promise<void>;
   firmwareVersion: string;
   latestVersion?: string;
@@ -40,7 +40,7 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
       currentVersion,
       mods,
       threshold
-    ] = await invokeIpc("load-components", process.env.EMUSAK_CDN);
+    ] = await invokeIpc("load-components", process.env.RYUSAK_CDN);
 
     const dayInMilliseconds = 1000 * 60 * 60 * 24;
     const tomorrow = new Date();

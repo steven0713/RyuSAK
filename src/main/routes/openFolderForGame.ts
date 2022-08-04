@@ -1,9 +1,9 @@
 import { shell } from "electron";
 import path from "path";
 import fs from "fs-extra";
-import { EmusakEmulatorsKind } from "../../types";
+import { RyusakEmulatorsKind } from "../../types";
 
-export type openFolderIPCProps = [string, "shaders" | "mods", string, EmusakEmulatorsKind];
+export type openFolderIPCProps = [string, "shaders" | "mods", string, RyusakEmulatorsKind];
 
 const openYuzuFolders = async (...args: openFolderIPCProps) => {
   const [titleId, dir, dataPath] = args;

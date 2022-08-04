@@ -27,7 +27,7 @@ const NavBarComponent = () => {
       <AppBar enableColorOnDark color="primary" position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} style={{ flex: "0 0 90px" }}>
-            <b>{ t("emusak") }</b>
+            <b>{ t("ryusak") }</b>
           </Typography>
           <div style={{ flex: 1 }}>
             <Box style={{ margin: "0 auto", width: 250 }}>

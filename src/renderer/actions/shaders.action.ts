@@ -9,7 +9,7 @@ import { invokeIpc } from "../utils";
 export interface IShaders {
   needRefreshShaders: boolean,
   downloadShadersAction: (titleId: string, dataPath: string) => void,
-  shareShaders: (titleId: string, dataPath: string, localShaderCount: number, emusakCount: number) => void,
+  shareShaders: (titleId: string, dataPath: string, localShaderCount: number, ryusakCount: number) => void,
 }
 
 const { t } = useTranslation();
@@ -48,7 +48,7 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
     });
     return set({ needRefreshShaders: !state.needRefreshShaders });
   },
-  shareShaders: async (titleId, dataPath, localShaderCount, emusakCount) => {
+  shareShaders: async (titleId, dataPath, localShaderCount, ryusakCount) => {
     const key = `ryu-share-${titleId}-${localShaderCount}`;
 
     if (localStorage.getItem(key)) {
@@ -88,7 +88,7 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
 
     ipcRenderer.on("download-progress", onShadersShareProgress);
 
-    const result = await invokeIpc("share-shaders", titleId, dataPath, localShaderCount, emusakCount);
+    const result = await invokeIpc("share-shaders", titleId, dataPath, localShaderCount, ryusakCount);
     state.removeFileAction(dlManagerFilename);
     ipcRenderer.removeListener("download-progress", onShadersShareProgress);
 

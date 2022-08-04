@@ -25,9 +25,9 @@ export enum HTTP_PATHS {
 }
 
 export enum GITHUB_PATHS {
-  THRESHOLD        = "https://raw.githubusercontent.com/stromcon/emusak-ui/main/src/assets/threshold.txt",
-  RELEASE_INFO     = "https://api.github.com/repos/stromcon/emusak-ui/releases/latest",
-  FIRMWARE_VERSION = "https://raw.githubusercontent.com/stromcon/emusak-ui/main/src/assets/version.txt",
+  THRESHOLD        = "https://raw.githubusercontent.com/Ecks1337/RyuSAK/master/src/assets/threshold.txt",
+  RELEASE_INFO     = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
+  FIRMWARE_VERSION = "https://raw.githubusercontent.com/Ecks1337/RyuSAK/master/src/assets/version.txt",
 }
 
 // CloudFlare DNS https://1.1.1.1/dns/
@@ -54,7 +54,7 @@ const staticDnsAgent = (scheme: "http" | "https") => {
 
 class HttpService {
 
-  public url: string = process.env.EMUSAK_CDN;
+  public url: string = process.env.RYUSAK_CDN;
 
   // Trigger HTTP request using an exponential backoff strategy
   protected _fetch(path: string, type: "JSON" | "TXT" | "BUFFER" = "JSON", host: string = this.url, defaultValue = {}, retries = 5) {
@@ -151,7 +151,7 @@ class HttpService {
   public async getLatestApplicationVersion() {
     const versionResponse = await this._fetch(GITHUB_PATHS.RELEASE_INFO).catch(() => null);
     if (!versionResponse) {
-      // If we cannot fetch the latest version return the current version to avoid trigger logic when emusak is not up to date
+      // If we cannot fetch the latest version return the current version to avoid trigger logic when ryusak is not up to date
       return app.getVersion();
     }
 

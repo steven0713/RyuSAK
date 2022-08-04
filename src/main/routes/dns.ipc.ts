@@ -11,7 +11,7 @@ export const toggleCustomDnsResolver = async () => {
 
   dialog.showMessageBox({
     title: "Done !",
-    message: "Please restart emusak so changes can takes effect",
+    message: "Please restart RyuSAK so changes can takes effect",
     type: "info",
     buttons: ["Ok"],
   });

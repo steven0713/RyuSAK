@@ -1,8 +1,8 @@
 import { BrowserWindow, dialog, app } from "electron";
 import * as path from "path";
-import { EmusakEmulatorConfig, EmusakEmulatorsKind } from "../../types";
+import { RyusakEmulatorConfig, RyusakEmulatorsKind } from "../../types";
 
-const addEmulatorConfigurationIpc = async (mainWindow: BrowserWindow, emuKind: EmusakEmulatorsKind) => {
+const addEmulatorConfigurationIpc = async (mainWindow: BrowserWindow, emuKind: RyusakEmulatorsKind) => {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, { properties: ["openFile"] });
 
   if (canceled) {
@@ -22,7 +22,7 @@ const addEmulatorConfigurationIpc = async (mainWindow: BrowserWindow, emuKind: E
   return filePaths[0];
 };
 
-const createDefaultConfigActionForEmu = (emu: EmusakEmulatorsKind): EmusakEmulatorConfig => {
+const createDefaultConfigActionForEmu = (emu: RyusakEmulatorsKind): RyusakEmulatorConfig => {
   if (emu === "yuzu") {
     if (process.platform !== "win32") {
       return {

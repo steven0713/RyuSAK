@@ -1,21 +1,21 @@
-export type EmusakSaves = {
+export type RyusakSaves = {
   [key: string]: string[];
 };
 
-export type EmusakMods = {
+export type RyusakMods = {
   "name": string
 }[];
 
-export type EmusakShaders = {
+export type RyusakShaders = {
   [key: string]: number;
 };
 
-export type EmusakEmulatorsKind = "yuzu" | "ryu";
+export type RyusakEmulatorsKind = "yuzu" | "ryu";
 
-export type EmusakEmulatorConfig = {
+export type RyusakEmulatorConfig = {
   path: string,
   name: string,
-  emulator : EmusakEmulatorsKind,
+  emulator : RyusakEmulatorsKind,
   isDefault?: boolean,
   selected?: boolean
 };
@@ -24,23 +24,23 @@ export enum LS_KEYS {
   CONFIG = "v2-emulators-bin",
   TOS = "v2-tos",
   TAB = "v2-tab",
-  ESHOP_UPDATE = "emusak-eshop-update-date-2",
-  LOCALE = "emusak-locale"
+  ESHOP_UPDATE = "ryusak-eshop-update-date-2",
+  LOCALE = "ryusak-locale"
 }
 
-export type EmusakEmulatorMode = {
+export type RyusakEmulatorMode = {
   mode: "global" | "portable" | "fitgirl" | "pinejinx" | "pinejinxLdn",
   dataPath: string
 };
 
-export type EmusakEmulatorGames = string[];
+export type RyusakEmulatorGames = string[];
 
-export type EmusakEmulatorGame = {
+export type RyusakEmulatorGame = {
   title: string,
   img: string
 };
 
-export type EmusakDownload = {
+export type RyusakDownload = {
   filename: string,
   progress: number,
   downloadSpeed: number,

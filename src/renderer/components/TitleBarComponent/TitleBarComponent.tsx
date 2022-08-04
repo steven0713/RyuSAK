@@ -5,7 +5,7 @@ import CropSquareRoundedIcon from "@mui/icons-material/CropSquareRounded";
 import useTranslation from "../../i18n/I18nService";
 import useStore from "../../actions/state";
 import MinimizeIcon from "@mui/icons-material/Minimize";
-import logo from "../../resources/emusak_logo.png";
+import logo from "../../resources/ryusak_logo.png";
 
 import "./titleBar.css";
 
@@ -15,15 +15,15 @@ const TitleBarComponent = () => {
   const [
     version,
     getVersionAction,
-    closeEmuSAKAction,
-    maximizeEmuSAKAction,
-    minimizeEmuSAKAction,
+    closeRyuSAKAction,
+    maximizeRyuSAKAction,
+    minimizeRyuSAKAction,
   ] = useStore(state => [
     state.version,
     state.getVersionAction,
-    state.closeEmuSAKAction,
-    state.maximizeEmuSAKAction,
-    state.minimizeEmuSAKAction,
+    state.closeRyuSAKAction,
+    state.maximizeRyuSAKAction,
+    state.minimizeRyuSAKAction,
   ]);
 
   useEffect(() => {
@@ -36,16 +36,16 @@ const TitleBarComponent = () => {
         <img src={logo} height={28} alt=""/>
       </div>
       <div className="title-bar-title">
-        <span>{t("emusak")} <small>- v{version}</small></span>
+        <span>{t("ryusak")} <small>- v{version}</small></span>
       </div>
       <div className="title-bar-buttons">
-        <IconButton onClick={minimizeEmuSAKAction} size="small" style={{ color: "#FFF" }} color="primary" disableRipple>
+        <IconButton onClick={minimizeRyuSAKAction} size="small" style={{ color: "#FFF" }} color="primary" disableRipple>
           <MinimizeIcon style={{ height: 20 }} />
         </IconButton>
-        <IconButton onClick={maximizeEmuSAKAction} size="small" style={{ color: "#FFF" }} color="primary" disableRipple>
+        <IconButton onClick={maximizeRyuSAKAction} size="small" style={{ color: "#FFF" }} color="primary" disableRipple>
           <CropSquareRoundedIcon style={{ height: 20 }} />
         </IconButton>
-        <IconButton onClick={closeEmuSAKAction} size="small" style={{ color: "#FFF" }} color="primary" className="title-bar-close-button" disableRipple>
+        <IconButton onClick={closeRyuSAKAction} size="small" style={{ color: "#FFF" }} color="primary" className="title-bar-close-button" disableRipple>
           <CloseIcon style={{ height: 20 }} />
         </IconButton>
       </div>

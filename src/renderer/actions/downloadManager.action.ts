@@ -1,10 +1,10 @@
-import { EmusakDownload } from "../../types";
+import { RyusakDownload } from "../../types";
 import { GetState, SetState } from "zustand/vanilla";
 import useStore from "./state";
 
 export interface IDownloadManager {
-  dlManagerFiles: EmusakDownload[],
-  upsertFileAction: (file: EmusakDownload) => void,
+  dlManagerFiles: RyusakDownload[],
+  upsertFileAction: (file: RyusakDownload) => void,
   removeFileAction: (file: string) => void,
   updateFileProgress: (filename: string, eventKey: string, percentage: number, downloadSpeed?: number) => void,
 }

@@ -2,7 +2,7 @@ import HttpService from "../services/HttpService";
 import fs from "fs-extra";
 import path from "path";
 import { BrowserWindow } from "electron";
-import { EmusakEmulatorsKind, EmusakMods } from "../../types";
+import { RyusakEmulatorsKind, RyusakMods } from "../../types";
 import Zip from "adm-zip";
 import glob from "glob";
 
@@ -10,11 +10,11 @@ export type getModsVersionsProps = [string];
 
 export type getModsListForVersionProps = [string, string];
 
-export type downloadModProps = [string, string, string, string, EmusakEmulatorsKind];
+export type downloadModProps = [string, string, string, string, RyusakEmulatorsKind];
 
 export const getModsVersions = async (...args: getModsVersionsProps) => {
   const [titleId] = args;
-  return <EmusakMods[]> <unknown> HttpService.getVersionsForMod(titleId);
+  return <RyusakMods[]> <unknown> HttpService.getVersionsForMod(titleId);
 };
 
 export const getModsListForVersion = async (...args: getModsListForVersionProps) => {

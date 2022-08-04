@@ -14,12 +14,12 @@ import {
   Stack
 } from "@mui/material";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { EmusakEmulatorMode } from "../../types";
+import { RyusakEmulatorMode } from "../../types";
 import useTranslation from "../i18n/I18nService";
 
 const RootComponent = () => {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<EmusakEmulatorMode>(null);
+  const [mode, setMode] = useState<RyusakEmulatorMode>(null);
 
   const [
     emulatorBinariesPath,

@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: ''
-assignees: stromcon
+assignees: ''
 
 ---
 
@@ -20,15 +20,15 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Did you used fitgirl repack to install Ryujinx**
+**Did you use a fitgirl repack to install Ryujinx?**
 [Yes/no]
 
 **Screenshots**
-Add screenshots to help explain your problem. Even it seems to be irrelevant this can probably help
+Add screenshots to help explain your problem. Even if it seems irrelevant, it may help.
 
 **Desktop (please complete the following information):**
-- OS: [e.g. windows or linux]
-- Version [e.g. 1.0.72]
+- OS: [e.g. Windows or Linux]
+- Version [e.g. 1.0.0]
 
 **Additional context**
 Add any other context about the problem here.

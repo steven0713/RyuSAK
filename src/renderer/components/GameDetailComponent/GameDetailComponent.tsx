@@ -154,7 +154,7 @@ const GameDetailComponent = () => {
 
   const hasMods  = mods.find(m => m.name.toUpperCase() === metaData.titleId.toUpperCase());
   const hasSaves = Object.keys(saves).map(k => k.toUpperCase()).includes(metaData.titleId.toUpperCase());
-  const emusakShadersCount = ryujinxShaders[metaData.titleId.toUpperCase()] || 0;
+  const ryusakShadersCount = ryujinxShaders[metaData.titleId.toUpperCase()] || 0;
 
   return (
     <Box p={3}>
@@ -285,8 +285,8 @@ const GameDetailComponent = () => {
                       <Button
                         variant="contained"
                         fullWidth
-                        disabled={(emusakShadersCount + threshold) >= localShadersCount}
-                        onClick={() => shareShaders(metaData.titleId, dataPath, localShadersCount, emusakShadersCount)}
+                        disabled={(ryusakShadersCount + threshold) >= localShadersCount}
+                        onClick={() => shareShaders(metaData.titleId, dataPath, localShadersCount, ryusakShadersCount)}
                       >
                         {threshold >= 1E6 ? "Sharing shaders disabled" : t("shareShaders")}
                       </Button>
@@ -298,17 +298,17 @@ const GameDetailComponent = () => {
 
                 <GridWithVerticalSeparator item xs pl={2}>
                   <Box>
-                    <TwoLinesTitle variant="h6" align="center">{t("emusakShadersCount")}</TwoLinesTitle>
+                    <TwoLinesTitle variant="h6" align="center">{t("ryusakShadersCount")}</TwoLinesTitle>
                     <p>
                       <Button style={{ pointerEvents: "none" }} variant="outlined" fullWidth>
-                        { emusakShadersCount }
+                        { ryusakShadersCount }
                       </Button>
                     </p>
                     <p>
                       <Button
                         variant="contained"
                         fullWidth
-                        disabled={emusakShadersCount === 0}
+                        disabled={ryusakShadersCount === 0}
                         onClick={() => downloadShadersAction(metaData.titleId, dataPath)}
                       >
                         {t("dlShaders")}
@@ -328,7 +328,7 @@ const GameDetailComponent = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Alert severity="warning">Due to Ryujinx changes, shaders does not work anymore with LDN build. There is a backup of working shaders in Discord, <code>emusak</code> channel. If you see EmuSAK has a lower shader count than you locally, I suggest to download again shaders from EmuSAK.</Alert>
+          <Alert severity="warning">Due to Ryujinx changes, shaders does not work anymore with LDN build. There is a backup of working shaders in Discord, <code>ryusak</code> channel. If you see RyuSAK has a lower shader count than you locally, I suggest to download again shaders from RyuSAK.</Alert>
           <Divider />
         </Grid>
 

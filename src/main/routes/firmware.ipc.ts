@@ -1,4 +1,4 @@
-import { EmusakEmulatorsKind } from "../../types";
+import { RyusakEmulatorsKind } from "../../types";
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import fs from "fs-extra";
@@ -6,7 +6,7 @@ import AdmZip from "adm-zip";
 import HttpService, { HTTP_PATHS } from "../services/HttpService";
 
 
-const installFirmware = async (emu: EmusakEmulatorsKind, dataPath: string, mainWindow: BrowserWindow) => {
+const installFirmware = async (emu: RyusakEmulatorsKind, dataPath: string, mainWindow: BrowserWindow) => {
   const destPath = path.resolve(app.getPath("temp"), "firmware.zip");
 
   try {

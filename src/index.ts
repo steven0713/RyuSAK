@@ -83,8 +83,7 @@ const handleStartupEvent = function () {
     case "--squirrel-uninstall":
       app.quit();
       try {
-        fs.removeSync(app.getPath("userData")); // Current emusak
-        fs.removeSync(path.resolve(app.getPath("userData"), "..", "emusak")); // Emusak V1
+        fs.removeSync(app.getPath("userData"));
       } catch (e) {
         console.error(e);
       }
@@ -128,7 +127,7 @@ const createWindow = (): void => {
     mainWindow.show();
 
     if (!isDev && process.platform === "win32") {
-      const feed = `https://update.electronjs.org/CapitaineJSparrow/emusak-ui/${process.platform}-${process.arch}/${app.getVersion()}`;
+      const feed = `https://update.electronjs.org/Ecks1337/RyuSAK/${process.platform}-${process.arch}/${app.getVersion()}`;
 
       autoUpdater.setFeedURL({
         url: feed

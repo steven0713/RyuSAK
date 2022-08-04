@@ -3,7 +3,7 @@ name: Build artifacts
 on:
   push:
     branches:
-      - main
+      - master
       - ci
     paths:
       - package.json
@@ -36,12 +36,10 @@ jobs:
         env:
           USE_HARD_LINKS: false
           GITHUB_TOKEN: ${{ github.token }}
-          EMUSAK_CDN: ${{ secrets.EMUSAK_CDN }}
-          EMUSAK_URL: ${{ secrets.EMUSAK_URL }}
+          EMUSAK_CDN: ${{ secrets.RYUSAK_CDN }}
       - run: npm run publish-from-dry-run
         name: Publish github artifacts
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          EMUSAK_CDN: ${{ secrets.EMUSAK_CDN }}
-          EMUSAK_URL: ${{ secrets.EMUSAK_URL }}
+          EMUSAK_CDN: ${{ secrets.RYUSAK_CDN }}
           USE_HARD_LINKS: false

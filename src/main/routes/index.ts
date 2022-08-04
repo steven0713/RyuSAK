@@ -8,7 +8,7 @@ import {
   deleteGameProps,
   deleteGame
 } from "./emulatorFilesystem";
-import { EmusakEmulatorsKind } from "../../types";
+import { RyusakEmulatorsKind } from "../../types";
 import { addEmulatorConfigurationIpc, createDefaultConfigActionForEmu } from "./addEmulatorConfiguration.ipc";
 import installFirmware from "./firmware.ipc";
 import { installKeys } from "./installKeys";
@@ -62,13 +62,13 @@ const makeIpcRoutes = (mainWindow: BrowserWindow) => {
   ipcMain.handle("load-components", async (_, ...args: loadComponentsProps) => loadComponentIpcHandler(...args));
   ipcMain.handle("get-app-version", async () => app.getVersion());
   ipcMain.handle("title-bar-action", async (_, action: "maximize" | "close" | "minimize") => titleBarIpc(action, mainWindow));
-  ipcMain.handle("add-emulator-folder", async (_, emuKind: EmusakEmulatorsKind) => addEmulatorConfigurationIpc(mainWindow, emuKind));
-  ipcMain.handle("system-scan-for-config", async (_, emuKind: EmusakEmulatorsKind, path: string) => emulatorFilesystem(emuKind, path));
-  ipcMain.handle("build-default-emu-config", async (_, emu: EmusakEmulatorsKind) => createDefaultConfigActionForEmu(emu));
-  ipcMain.handle("scan-games", async (_, dataPath: string, emu: EmusakEmulatorsKind) => scanGamesForConfig(dataPath, emu));
+  ipcMain.handle("add-emulator-folder", async (_, emuKind: RyusakEmulatorsKind) => addEmulatorConfigurationIpc(mainWindow, emuKind));
+  ipcMain.handle("system-scan-for-config", async (_, emuKind: RyusakEmulatorsKind, path: string) => emulatorFilesystem(emuKind, path));
+  ipcMain.handle("build-default-emu-config", async (_, emu: RyusakEmulatorsKind) => createDefaultConfigActionForEmu(emu));
+  ipcMain.handle("scan-games", async (_, dataPath: string, emu: RyusakEmulatorsKind) => scanGamesForConfig(dataPath, emu));
   ipcMain.handle("build-metadata-from-titleId", async (_, titleId: string) => buildMetadataForTitleId(titleId));
-  ipcMain.handle("install-firmware", async (event, emu: EmusakEmulatorsKind, dataPath: string) => installFirmware(emu, dataPath, mainWindow));
-  ipcMain.handle("install-keys", async (_, dataPath: string, emu: EmusakEmulatorsKind) => installKeys(dataPath, emu));
+  ipcMain.handle("install-firmware", async (event, emu: RyusakEmulatorsKind, dataPath: string) => installFirmware(emu, dataPath, mainWindow));
+  ipcMain.handle("install-keys", async (_, dataPath: string, emu: RyusakEmulatorsKind) => installKeys(dataPath, emu));
   ipcMain.handle("update-eshop-data", async () => updateEshopData());
   ipcMain.handle("openFolderForGame", async (_, ...args: openFolderIPCProps) => openFolderForGame(...args));
   ipcMain.handle("getRyujinxCompatibility", async (_, ...args: ryujinxCompatibilityProps) => ryujinxCompatibility(...args));

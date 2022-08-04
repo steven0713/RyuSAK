@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import "./gameListing.css";
-import { EmusakEmulatorConfig, EmusakEmulatorMode } from "../../../types";
+import { RyusakEmulatorConfig, RyusakEmulatorMode } from "../../../types";
 import useStore from "../../actions/state";
 import { Box, Button, Chip, Divider, Grid, IconButton, TextField, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
@@ -15,8 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { invokeIpc } from "../../utils";
 
 interface IEmulatorContainer {
-  config: EmusakEmulatorConfig;
-  mode: EmusakEmulatorMode;
+  config: RyusakEmulatorConfig;
+  mode: RyusakEmulatorMode;
 }
 
 const Label = styled(Paper)(({ theme }) => ({

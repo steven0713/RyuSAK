@@ -1,6 +1,6 @@
 import path from "path";
 import { app, dialog } from "electron";
-import { EmusakEmulatorGames, EmusakEmulatorMode, EmusakEmulatorsKind } from "../../types";
+import { RyusakEmulatorGames, RyusakEmulatorMode, RyusakEmulatorsKind } from "../../types";
 import customDatabase from "../../assets/custom_database.json";
 import tinfoilDatabase from "../../assets/tinfoildb.json";
 import getEshopData from "../services/eshopData";
@@ -10,14 +10,14 @@ import fs from "fs-extra";
 const tfDb: typeof tinfoilDatabase = tinfoilDatabase;
 const csDb: typeof customDatabase = customDatabase;
 
-export const getRyujinxMode = async (binaryPath: string): Promise<EmusakEmulatorMode> => {
+export const getRyujinxMode = async (binaryPath: string): Promise<RyusakEmulatorMode> => {
   const fitgirlDataPath = path.resolve(binaryPath, "..", "..", "data", "games");
   const isFitgirlRepack = await fs.stat(fitgirlDataPath).then(() => true).catch(() => false);
 
   if (isFitgirlRepack) {
     dialog.showMessageBox({
       title: "Fitgirl strikes again",
-      message: "EmuSAK does not support Fitgirl repacks, please setup Ryujinx yourself and delete this configuration.",
+      message: "RyuSAK does not support Fitgirl repacks, please setup Ryujinx yourself and delete this configuration.",
       type: "error",
       buttons: ["Ok"],
     });
@@ -39,7 +39,7 @@ export const getRyujinxMode = async (binaryPath: string): Promise<EmusakEmulator
   };
 };
 
-const getYuzuMode = async (binaryPath: string): Promise<EmusakEmulatorMode> => {
+const getYuzuMode = async (binaryPath: string): Promise<RyusakEmulatorMode> => {
   const portableDataPath = path.resolve(binaryPath, "..", "user");
   const isPortable = await fs.stat(portableDataPath).then(() => true).catch(() => false);
 
@@ -58,7 +58,7 @@ const getYuzuMode = async (binaryPath: string): Promise<EmusakEmulatorMode> => {
   };
 };
 
-export const emulatorFilesystem = async (kind: EmusakEmulatorsKind, binaryPath: string): Promise<EmusakEmulatorMode> => {
+export const emulatorFilesystem = async (kind: RyusakEmulatorsKind, binaryPath: string): Promise<RyusakEmulatorMode> => {
   if (kind === "yuzu") {
     return getYuzuMode(binaryPath);
   }
@@ -66,7 +66,7 @@ export const emulatorFilesystem = async (kind: EmusakEmulatorsKind, binaryPath: 
   return getRyujinxMode(binaryPath);
 };
 
-export const scanGamesForConfig = async (dataPath: string, emu: EmusakEmulatorsKind): Promise<EmusakEmulatorGames> => {
+export const scanGamesForConfig = async (dataPath: string, emu: RyusakEmulatorsKind): Promise<RyusakEmulatorGames> => {
   try {
     if (emu === "yuzu") {
       const windowsPath = path.join(dataPath, "cache", "game_list");
@@ -81,7 +81,7 @@ export const scanGamesForConfig = async (dataPath: string, emu: EmusakEmulatorsK
   }
 };
 
-export type deleteGameProps = [string, string, EmusakEmulatorsKind];
+export type deleteGameProps = [string, string, RyusakEmulatorsKind];
 
 export const deleteGame = async (...args: deleteGameProps) => {
   const [titleId, dataPath, emulator] = args;

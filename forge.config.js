@@ -5,16 +5,16 @@ const Zip = require("adm-zip");
 module.exports = {
   "forge": "./forge.config.js",
   "packagerConfig": {
-    "icon": "./icons/win/icon.ico",
-    "executableName": "EmuSAK"
+    "icon": "./icon.ico",
+    "executableName": "RyuSAK"
   },
   "publishers": [
     {
       "name": "@electron-forge/publisher-github",
       "config": {
         "repository": {
-          "owner": "CapitaineJSparrow",
-          "name": "emusak-ui"
+          "owner": "Ecks1337",
+          "name": "RyuSAK"
         }
       }
     }
@@ -23,7 +23,7 @@ module.exports = {
     {
       "name": "@electron-forge/maker-squirrel",
       "config": {
-        "name": "emusak_ui"
+        "name": "RyuSAK"
       }
     },
     {
@@ -75,7 +75,7 @@ module.exports = {
       try {
         if (portablePath) {
           const filename = path.basename(portablePath);
-          await fs.move(portablePath, portablePath.replace(filename, `EmuSAK-win32-x64-${version}-portable.zip`));
+          await fs.move(portablePath, portablePath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
         }
       } catch(e) {
         // fs.move is launched twice, first for dry run and second time by make from dry-run causing an exception, so ignore and assume it exists
@@ -84,7 +84,7 @@ module.exports = {
       try {
         if (exePath) {
           const filename = path.basename(exePath);
-          await fs.move(exePath, exePath.replace(filename, `EmuSAK-win32-x64-${version}-installer-recommended.exe`));
+          await fs.move(exePath, exePath.replace(filename, `RyuSAK-win32-x64-${version}-installer.exe`));
         }
       } catch(e) {}
 
@@ -96,15 +96,15 @@ module.exports = {
               const filename = path.basename(fullPath);
 
               if (fullPath.includes(".zip") && fullPath.includes("win32")) {
-                const archive = new Zip(fullPath.replace(filename, `EmuSAK-win32-x64-${version}-portable.zip`));
-                archive.addFile("portable", Buffer.from("portable", "utf8"), "EmuSAK is portable");
-                fs.removeSync(fullPath.replace(filename, `EmuSAK-win32-x64-${version}-portable.zip`));
-                archive.writeZip(fullPath.replace(filename, `EmuSAK-win32-x64-${version}-portable.zip`));
-                return fullPath.replace(filename, `EmuSAK-win32-x64-${version}-portable.zip`);
+                const archive = new Zip(fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
+                archive.addFile("portable", Buffer.from("portable", "utf8"), "RyuSAK is portable");
+                fs.removeSync(fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
+                archive.writeZip(fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
+                return fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`);
               }
 
               if (fullPath.includes(".exe")) {
-                return fullPath.replace(filename, `EmuSAK-win32-x64-${version}-installer-recommended.exe`);
+                return fullPath.replace(filename, `RyuSAK-win32-x64-${version}-installer.exe`);
               }
 
               return fullPath;
