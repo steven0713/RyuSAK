@@ -1,7 +1,7 @@
 {
   "name": "RyuSAK",
   "productName": "RyuSAK",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "RyuSAK",
   "repository": "https://github.com/Ecks1337/RyuSAK",
   "main": ".webpack/main",
@@ -69,6 +69,7 @@
     "glob": "^7.2.0",
     "https-proxy-agent": "^5.0.1",
     "i18next": "^21.3.3",
+    "linq": "^4.0.0",
     "node-fetch": "^3.1.1",
     "p-retry": "^4.6.1",
     "react": "^17.0.2",

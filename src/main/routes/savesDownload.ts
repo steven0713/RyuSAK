@@ -3,13 +3,10 @@ import { app, shell } from "electron";
 import fs from "fs-extra";
 import path from "path";
 
-export type downloadSaveProps = [string, number, string];
-
-const downloadSave = async (...args: downloadSaveProps) => {
-  const [titleId, index, filename] = args;
-  const buffer = await HttpService.downloadSave(titleId, index);
+const downloadSave = async (fileName: string) => {
+  const buffer = await HttpService.downloadSave(fileName);
   const desktopPath = app.getPath("desktop");
-  const fileDest = path.resolve(desktopPath, filename);
+  const fileDest = path.resolve(desktopPath, fileName);
   await fs.writeFile(fileDest, Buffer.from(buffer as unknown as ArrayBuffer));
   shell.showItemInFolder(fileDest);
 };

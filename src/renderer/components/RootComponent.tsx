@@ -132,7 +132,7 @@ const RootComponent = () => {
             (selectedConfig && mode) && (
               <>
                 <Grid item style={{ lineHeight: "52px" }} xs={4} lg={3}>
-                  <Button onClick={() => installFirmwareAction(mode.dataPath) } fullWidth variant="contained">{ t("dl_firmware") } { firmwareVersion }</Button>
+                  <Button onClick={() => installFirmwareAction(mode.dataPath, firmwareVersion) } fullWidth variant="contained">{ t("dl_firmware") } { firmwareVersion }</Button>
                 </Grid>
                 <Grid item style={{ lineHeight: "52px" }} xs={3}>
                   <Button onClick={() => downloadKeysAction(mode.dataPath)} fullWidth variant="contained">{ t("dl_keys") }</Button>

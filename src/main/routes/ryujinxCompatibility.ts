@@ -17,6 +17,9 @@ const ryujinxCompatibility = async (...args: ryujinxCompatibilityProps) => {
   let compatData = <GithubIssue> (await HttpService.getRyujinxCompatibility(titleId).catch(() => null));
   compatData.mode = "id";
 
+  if (!compatData.items)
+    return null;
+
   // In case there is no compatibility found, try a search by name instead titleId
   if (compatData.items.length === 0) {
     const metadata = await buildMetadataForTitleId(titleId);

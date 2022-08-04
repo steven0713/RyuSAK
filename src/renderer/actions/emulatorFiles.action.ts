@@ -16,9 +16,9 @@ const onFirmwareProgressEvent = (_: unknown, filename: string, percentage: numbe
 };
 
 const createEmulatorFilesSLice = (_set: SetState<{ }>, get: GetState<Partial<ITitleBar & IAlert>>) => ({
-  installFirmwareAction: async (dataPath: string) => {
+  installFirmwareAction: async (dataPath: string, fwVersion: string) => {
     ipcRenderer.on("download-progress", onFirmwareProgressEvent);
-    const extractPath = await invokeIpc("install-firmware", get().currentEmu, dataPath);
+    const extractPath = await invokeIpc("install-firmware", get().currentEmu, dataPath, fwVersion);
 
     useStore.getState().removeFileAction(firmwareFileName);
     ipcRenderer.removeListener("download-progress", onFirmwareProgressEvent);

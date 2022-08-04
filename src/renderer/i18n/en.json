@@ -49,7 +49,7 @@
   "dlSave": "Download saves",
   "noSave": "No save data",
   "dlSaveDesc": "Once the download is complete, the save file will be placed on your desktop. To install a save, right click the game in the emulator game list, \"open save folder\" and extract the downloaded archive there. Be sure to backup your current save file if you want to use it later!",
-  "noCompatData": "There is no compatibility data yet, feel free to add your own! Do <i>not</i> do that if it's leaked game!",
+  "noCompatData": "There is no compatibility data yet, feel free to add your own! Do not do that if it's leaked game!",
   "addCompatReport": "Add your report",
   "infoNewReport": "You'll be redirected to Ryujinx' official game compatibility tracker on GitHub. Please follow the issue template and double check that a report doesn't already exist for this game. Also, if this game hasn't officially released (AKA leaked), your report will be removed because Ryujinx doesn't support pirated games.",
   "infoExistingReport": "You'll be redirected to the Ryujinx official game compatibility tracker on GitHub. Please add a comment to the existing issue and make sure to provide relevant information like hardware specs and log file. Do not create a new issue!",

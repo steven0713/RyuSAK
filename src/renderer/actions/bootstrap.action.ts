@@ -1,5 +1,5 @@
 import { GetState, SetState } from "zustand/vanilla";
-import { RyusakMods, RyusakSaves, RyusakShaders, LS_KEYS, Settings } from "../../types";
+import { MirrorDirMeta, RyusakShaders, LS_KEYS, Settings } from "../../types";
 import { IDownloadManager } from "./downloadManager.action";
 import useTranslation from "../i18n/I18nService";
 import { invokeIpc } from "../utils";
@@ -8,8 +8,7 @@ const { t } = useTranslation();
 
 interface IBootstrap {
   isAppInitialized: boolean;
-  saves: RyusakSaves;
-  mods: RyusakMods;
+  saves: MirrorDirMeta;
   ryujinxShaders: RyusakShaders;
   bootstrapAppAction: () => Promise<void>;
   firmwareVersion: string;
@@ -23,12 +22,11 @@ const lastEshopUpdate = localStorage.getItem(LS_KEYS.ESHOP_UPDATE) ? +localStora
 
 const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownloadManager>): IBootstrap => ({
   isAppInitialized: false,
-  saves: {},
+  saves: [],
   ryujinxShaders: {},
   firmwareVersion: "",
   latestVersion: null,
   currentVersion: null,
-  mods: [],
   settings: {},
   bootstrapAppAction: async () => {
     const [
@@ -38,9 +36,8 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
       firmwareVersion,
       latestVersion,
       currentVersion,
-      mods,
       threshold
-    ] = await invokeIpc("load-components", process.env.RYUSAK_CDN);
+    ] = await invokeIpc("load-components");
 
     const dayInMilliseconds = 1000 * 60 * 60 * 24;
     const tomorrow = new Date();
@@ -74,7 +71,6 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
       firmwareVersion,
       latestVersion,
       currentVersion,
-      mods,
       threshold
     });
   }

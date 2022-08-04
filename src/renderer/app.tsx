@@ -39,7 +39,6 @@ import { ipcRenderer } from "electron";
 import UpdateComponent from "./components/UpdateComponent/UpdateComponent";
 import { LS_KEYS } from "../types";
 import DownloadSaveComponent from "./components/DownloadSaveComponent/DownloadSaveComponent";
-import DownloadModComponent from "./components/DownloadModComponent/DownloadModComponent";
 import GameDetailComponent from "./components/GameDetailComponent/GameDetailComponent";
 
 const darkTheme = createTheme({
@@ -113,7 +112,6 @@ const App = () => {
         <AlertComponent />
         <DownloadManagerComponent />
         <DownloadSaveComponent />
-        <DownloadModComponent />
         <UpdateComponent state={downloadState} />
         { !isAppInitialized
           ? <BootstrapComponent />

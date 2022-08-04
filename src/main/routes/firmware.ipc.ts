@@ -6,11 +6,11 @@ import AdmZip from "adm-zip";
 import HttpService, { HTTP_PATHS } from "../services/HttpService";
 
 
-const installFirmware = async (emu: RyusakEmulatorsKind, dataPath: string, mainWindow: BrowserWindow) => {
+const installFirmware = async (emu: RyusakEmulatorsKind, dataPath: string, fwVersion: string, mainWindow: BrowserWindow) => {
   const destPath = path.resolve(app.getPath("temp"), "firmware.zip");
 
   try {
-    const result = await HttpService.fetchWithProgress(HTTP_PATHS.FIRMWARE, destPath, mainWindow, "firmware.zip");
+    const result = await HttpService.fetchWithProgress(HTTP_PATHS.FIRMWARE_ZIP.replace("{fw_version}", fwVersion), destPath, mainWindow, "firmware.zip");
 
     if (!result) {
       return { error: true, code: "FETCH_FAILED" };

@@ -2,12 +2,9 @@ import fs from "fs-extra";
 import path from "path";
 import zip from "adm-zip";
 import HttpService, { HTTP_PATHS } from "../services/HttpService";
-import { BrowserWindow, dialog, app } from "electron";
+import { BrowserWindow, dialog } from "electron";
 import { buildMetadataForTitleId } from "./emulatorFilesystem";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import FormData from "form-data";
-import https from "https";
-import fetch from "../services/fetchProxy";
 import { Buffer } from "buffer";
 
 export type countShadersProps = [string, string];
@@ -121,50 +118,28 @@ export const countShaders = async (...args: countShadersProps): Promise<number> 
 
 export const installShaders = async (mainWindow: BrowserWindow, ...args: installShadersProps): Promise<boolean> => {
   const [titleId, dataPath] = args;
-  const shaderDestPath = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "guest", "program", "cache.zip");
-  const infoDestPath = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "guest", "program", "cache.info");
-  const exists = await fs.promises.access(infoDestPath).then(() => true).catch(() => false);
 
-  if (!exists) {
-    await fs.promises.mkdir(path.resolve(infoDestPath, ".."), { recursive: true });
-  }
+  const shaderCacheDir = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader");
+  await fs.ensureDir(shaderCacheDir);
+  await fs.emptyDir(shaderCacheDir);
 
-  const infoBuffer = await HttpService.downloadShaderInfo(titleId.toUpperCase()) as unknown as ArrayBuffer;
-
-  if (!infoBuffer) {
-    return null;
-  }
-
-  try {
-    await fs.remove(path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "opengl"));
-    await fs.writeFile(infoDestPath, Buffer.from(infoBuffer));
-  } catch(e) {
-    console.error(e);
-    return null;
-  }
-
-  const result = await HttpService.fetchWithProgress(HTTP_PATHS.SHADER_ZIP.replace("{id}", titleId), shaderDestPath, mainWindow, titleId);
+  const shaderCacheZipPath = path.resolve(shaderCacheDir, "cache.zip");
+  const result = await HttpService.fetchWithProgress(HTTP_PATHS.SHADER_ZIP.replace("{title_id}", titleId), shaderCacheZipPath, mainWindow, titleId);
 
   if (!result) {
     return null;
   }
 
-  const archive = new zip(shaderDestPath);
-  const sharedTocFiles = archive.getEntries().map(e => e.name).filter(name => name.toLocaleLowerCase() === "shared.toc");
-
-  // New shader cache system, unzip it a proper location then clean useless paths
-  if (sharedTocFiles.length !== 0) {
-    const rootShaderPath = path.resolve(shaderDestPath, "..", "..", "..");
-    await fs.emptyDir(rootShaderPath);
-    archive.extractAllTo(rootShaderPath, true);
-  } else {
-    await fs.emptyDir(path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "opengl"));
-  }
+  const shaderCacheZip = new zip(shaderCacheZipPath);
+  shaderCacheZip.extractAllTo(shaderCacheDir, true);
+  await fs.unlink(shaderCacheZipPath);
 
   return true;
 };
 
 export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShaders) => {
+  throw new Error("Not implemented"); // @ts-ignore
+
   const [titleId, dataPath, localCount, ryusakCount] = args;
 
   const guestTocFile = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "guest.toc");
@@ -215,6 +190,7 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
   let bytes = 0;
   let lastEmittedEventTimestamp = 0;
 
+  // @ts-ignore
   const readStream = fs.createReadStream(shadersPath).on("data", (chunk) => {
     bytes += chunk.length;
     const currentTimestamp = +new Date();
@@ -225,24 +201,6 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
     }
   });
 
-  const form = new FormData();
-  form.append("file", readStream);
-
-  const httpsAgent = new https.Agent({
-    rejectUnauthorized: false,
-  });
-
-  const res = await fetch("https://api.anonfiles.com/upload", {
-    method: "POST",
-    agent: httpsAgent,
-    body: form
-  }).catch(null).then(r => r.json());
-
-  if (!res) {
-    return { error: true, code: "SHARE_UPLOAD_FAIL" };
-  }
-
-  const message = `Hey there, I'm sharing my shaders using RyuSAK v${app.getVersion()} for **${metadata.title || metadata.titleId}** v${result.ranTitleVersion} (${titleId.toUpperCase()}). I have ${localCount} shaders while RyuSAK has ${ryusakCount} shaders. Download them from here : \`${Buffer.from((res as any).data.file.url.short).toString("base64")}\``;
-  await HttpService.postMessage(message);
+  // TODO: implement uploading shaders
   return true;
 };

@@ -8,25 +8,25 @@ export interface ISaveAction {
   currentSaveDownload?: string,
   setCurrentSaveDownloadAction: (id: string) => void,
   clearCurrentSaveAction: () => void,
-  downloadSaveAction: (index: number, filename: string) => void,
+  downloadSaveAction: (fileName: string) => void,
 }
 
 const createDownloadSaveSlice = (set: SetState<ISaveAction & IDownloadManager>): ISaveAction => ({
   currentSaveDownload: null,
   setCurrentSaveDownloadAction: (currentSaveDownload) => set({ currentSaveDownload }),
   clearCurrentSaveAction: () => set({ currentSaveDownload: null }),
-  downloadSaveAction: async (index, filename) => {
+  downloadSaveAction: async (fileName) => {
     const state = useStore.getState();
     state.upsertFileAction({
       filename: state.currentSaveDownload,
       downloadSpeed: Infinity,
       progress: Infinity
     });
-    await invokeIpc("downloadSave", state.currentSaveDownload, index, filename);
+    await invokeIpc("downloadSave", fileName);
     state.removeFileAction(state.currentSaveDownload);
     Swal.fire({
       icon: "success",
-      text: `${filename} has been placed on your desktop`
+      text: `${fileName} has been placed on your desktop`
     });
   }
 });

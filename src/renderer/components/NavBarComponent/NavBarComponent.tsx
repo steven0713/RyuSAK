@@ -5,9 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import useTranslation from "../../i18n/I18nService";
 import discord_logo from "../../resources/discord_logo.png";
-import ryu_logo from "../../resources/ryujinx_logo.png";
-import yuzu_logo from "../../resources/yuzu_logo.png";
-import { Button, IconButton, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { IconButton, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import useStore from "../../actions/state";
 import { LS_KEYS } from "../../../types";
 import { LANGUAGES } from "../../app";
@@ -15,7 +13,7 @@ import SettingComponent from "../SettingComponent/SettingComponent";
 
 const NavBarComponent = () => {
   const { t } = useTranslation();
-  const [currentEmu, switchEmuAction, switchLanguageAction] = useStore(s => [s.currentEmu, s.switchEmuAction, s.switchLanguageAction]);
+  const [switchLanguageAction] = useStore(s => [s.switchLanguageAction]);
   const locale = localStorage.getItem(LS_KEYS.LOCALE) ?? "en";
 
   const onLocaleSelectChange = (e: SelectChangeEvent) => {
@@ -30,26 +28,6 @@ const NavBarComponent = () => {
             <b>{ t("ryusak") }</b>
           </Typography>
           <div style={{ flex: 1 }}>
-            <Box style={{ margin: "0 auto", width: 250 }}>
-              <Button
-                onClick={() => switchEmuAction("ryu")}
-                startIcon={(<img src={ryu_logo} alt="ryujinx" height={30} />)}
-                variant="outlined"
-                color="success"
-                style={{ color: "#FFF", marginRight: 16, border: currentEmu === "ryu" ? "2px solid #EEE" : "2px solid transparent" }}
-              >
-                Ryujinx
-              </Button>
-              <Button
-                onClick={() => switchEmuAction("yuzu")}
-                startIcon={(<img src={yuzu_logo} alt="ryujinx" height={30} />)}
-                variant="text"
-                color="success"
-                style={{ color: "#FFF", border: currentEmu === "yuzu" ? "2px solid #EEE" : "2px solid transparent" }}
-              >
-                Yuzu
-              </Button>
-            </Box>
           </div>
           <Box style={{ flex: "0 0 80px" }} pr={3}>
             <Select
@@ -65,7 +43,7 @@ const NavBarComponent = () => {
             </Select>
           </Box>
           <Box style={{ flex: "0 0 50px" }}>
-            <a href="https://discord.gg/nKstg6x" className="no-blank-icon" target="_blank">
+            <a href="https://discord.gg/42Xnp7FRVW" className="no-blank-icon" target="_blank">
               <IconButton
                 edge="start"
                 color="inherit"

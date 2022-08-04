@@ -4,7 +4,6 @@ import { RyusakEmulatorGames, RyusakEmulatorMode, RyusakEmulatorsKind } from "..
 import customDatabase from "../../assets/custom_database.json";
 import tinfoilDatabase from "../../assets/tinfoildb.json";
 import getEshopData from "../services/eshopData";
-import { getModPathForTitleId } from "./modsDownload";
 import fs from "fs-extra";
 
 const tfDb: typeof tinfoilDatabase = tinfoilDatabase;
@@ -88,7 +87,6 @@ export const deleteGame = async (...args: deleteGameProps) => {
   const pathsToRemove: string[] = [];
 
   if (emulator === "ryu") {
-    pathsToRemove.push(getModPathForTitleId(titleId, dataPath));
     pathsToRemove.push(path.resolve(dataPath, "games", titleId.toLowerCase()));
   } else {
     pathsToRemove.push(path.resolve(dataPath, "load", titleId.toUpperCase()));

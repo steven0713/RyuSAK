@@ -23,6 +23,7 @@ import GameBananaModsComponent from "../GameBananaModsComponent";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useLocation, useNavigate } from "react-router-dom";
 import { invokeIpc } from "../../utils";
+import Enumerable from "linq";
 
 interface IGameDetailProps {
   titleId: string;
@@ -51,8 +52,6 @@ const GameDetailComponent = () => {
     currentEmu,
     saves,
     setCurrentSaveDownloadAction,
-    mods,
-    setCurrentModAction,
     ryujinxShaders,
     downloadShadersAction,
     needRefreshShaders,
@@ -64,8 +63,6 @@ const GameDetailComponent = () => {
     state.currentEmu,
     state.saves,
     state.setCurrentSaveDownloadAction,
-    state.mods,
-    state.setCurrentModAction,
     state.ryujinxShaders,
     state.downloadShadersAction,
     state.needRefreshShaders,
@@ -87,7 +84,7 @@ const GameDetailComponent = () => {
 
   const extractCompatibilityLabels = (response: GithubIssue) => {
     // Probably non 200 response from GitHub, so leave it as default value (null)
-    if (!response.items) return;
+    if (response == null) return;
 
     const item = (response.items).find(i => i.state === "open");
     setCompatMode(response.mode);
@@ -152,8 +149,7 @@ const GameDetailComponent = () => {
     return null;
   }
 
-  const hasMods  = mods.find(m => m.name.toUpperCase() === metaData.titleId.toUpperCase());
-  const hasSaves = Object.keys(saves).map(k => k.toUpperCase()).includes(metaData.titleId.toUpperCase());
+  const hasSaves = Enumerable.from(saves).any(save => save.name.includes(metaData.titleId.toUpperCase()));
   const ryusakShadersCount = ryujinxShaders[metaData.titleId.toUpperCase()] || 0;
 
   return (
@@ -222,16 +218,6 @@ const GameDetailComponent = () => {
             <Button
               variant="contained"
               fullWidth
-              disabled={!hasMods}
-              onClick={() => setCurrentModAction(metaData.titleId, dataPath)}
-            >
-              {t(hasMods ? "dlMods": "noMods")}
-            </Button>
-          </p>
-          <p>
-            <Button
-              variant="contained"
-              fullWidth
               disabled={!hasSaves}
               onClick={() => setCurrentSaveDownloadAction(metaData.titleId.toUpperCase())}
             >
@@ -285,10 +271,10 @@ const GameDetailComponent = () => {
                       <Button
                         variant="contained"
                         fullWidth
-                        disabled={(ryusakShadersCount + threshold) >= localShadersCount}
+                        disabled={true}//{(ryusakShadersCount + threshold) >= localShadersCount}
                         onClick={() => shareShaders(metaData.titleId, dataPath, localShadersCount, ryusakShadersCount)}
                       >
-                        {threshold >= 1E6 ? "Sharing shaders disabled" : t("shareShaders")}
+                        {/*threshold >= 1E6 ? "Sharing shaders disabled" : t("shareShaders")*/ "Shader uploading is currently unavailable"}
                       </Button>
                     </p>
                   </Box>
@@ -328,7 +314,7 @@ const GameDetailComponent = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Alert severity="warning">Due to Ryujinx changes, shaders does not work anymore with LDN build. There is a backup of working shaders in Discord, <code>ryusak</code> channel. If you see RyuSAK has a lower shader count than you locally, I suggest to download again shaders from RyuSAK.</Alert>
+          <Alert severity="warning">Due to Ryujinx changes, shaders does not work anymore with LDN build. If you see RyuSAK has a lower shader count than you locally, I suggest to download again shaders from RyuSAK.</Alert>
           <Divider />
         </Grid>
 

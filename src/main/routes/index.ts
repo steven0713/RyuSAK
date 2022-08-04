@@ -1,5 +1,5 @@
 import { app, ipcMain, BrowserWindow } from "electron";
-import loadComponentIpcHandler, { loadComponentsProps } from "./loadComponent.ipc";
+import loadComponentIpcHandler from "./loadComponent.ipc";
 import titleBarIpc from "./titleBar.ipc";
 import {
   emulatorFilesystem,
@@ -15,15 +15,7 @@ import { installKeys } from "./installKeys";
 import updateEshopData from "./eshopData.ipc";
 import openFolderForGame, { openFolderIPCProps } from "./openFolderForGame";
 import ryujinxCompatibility, { ryujinxCompatibilityProps } from "./ryujinxCompatibility";
-import savesDownloads, { downloadSaveProps } from "./savesDownload";
-import {
-  downloadMod,
-  downloadModProps,
-  getModsListForVersion,
-  getModsListForVersionProps,
-  getModsVersions,
-  getModsVersionsProps
-} from "./modsDownload";
+import savesDownloads from "./savesDownload";
 import { countShaders, countShadersProps, installShaders, installShadersProps, shareShaders } from "./shaders";
 import { toggleCustomDnsResolver } from "./dns.ipc";
 import { hasDnsFile } from "../../index";
@@ -45,9 +37,6 @@ export type IPCCalls = {
   "openFolderForGame": ReturnType<typeof openFolderForGame>,
   "getRyujinxCompatibility": ReturnType<typeof ryujinxCompatibility>,
   "downloadSave": ReturnType<typeof savesDownloads>,
-  "get-mods-versions": ReturnType<typeof getModsVersions>,
-  "get-mods-list-for-version": ReturnType<typeof getModsListForVersion>,
-  "download-mod": ReturnType<typeof downloadMod>,
   "count-shaders": ReturnType<typeof countShaders>,
   "install-shaders": ReturnType<typeof installShaders>,
   "share-shaders": ReturnType<typeof shareShaders>,
@@ -59,7 +48,7 @@ export type IPCCalls = {
 };
 
 const makeIpcRoutes = (mainWindow: BrowserWindow) => {
-  ipcMain.handle("load-components", async (_, ...args: loadComponentsProps) => loadComponentIpcHandler(...args));
+  ipcMain.handle("load-components", async (_) => loadComponentIpcHandler());
   ipcMain.handle("get-app-version", async () => app.getVersion());
   ipcMain.handle("title-bar-action", async (_, action: "maximize" | "close" | "minimize") => titleBarIpc(action, mainWindow));
   ipcMain.handle("add-emulator-folder", async (_, emuKind: RyusakEmulatorsKind) => addEmulatorConfigurationIpc(mainWindow, emuKind));
@@ -67,15 +56,12 @@ const makeIpcRoutes = (mainWindow: BrowserWindow) => {
   ipcMain.handle("build-default-emu-config", async (_, emu: RyusakEmulatorsKind) => createDefaultConfigActionForEmu(emu));
   ipcMain.handle("scan-games", async (_, dataPath: string, emu: RyusakEmulatorsKind) => scanGamesForConfig(dataPath, emu));
   ipcMain.handle("build-metadata-from-titleId", async (_, titleId: string) => buildMetadataForTitleId(titleId));
-  ipcMain.handle("install-firmware", async (event, emu: RyusakEmulatorsKind, dataPath: string) => installFirmware(emu, dataPath, mainWindow));
+  ipcMain.handle("install-firmware", async (event, emu: RyusakEmulatorsKind, dataPath: string, fwVersion: string) => installFirmware(emu, dataPath, fwVersion, mainWindow));
   ipcMain.handle("install-keys", async (_, dataPath: string, emu: RyusakEmulatorsKind) => installKeys(dataPath, emu));
   ipcMain.handle("update-eshop-data", async () => updateEshopData());
   ipcMain.handle("openFolderForGame", async (_, ...args: openFolderIPCProps) => openFolderForGame(...args));
   ipcMain.handle("getRyujinxCompatibility", async (_, ...args: ryujinxCompatibilityProps) => ryujinxCompatibility(...args));
-  ipcMain.handle("downloadSave", async (_, ...args: downloadSaveProps) => savesDownloads(...args));
-  ipcMain.handle("get-mods-versions", async(_, ...args: getModsVersionsProps) => getModsVersions(...args));
-  ipcMain.handle("get-mods-list-for-version", async(_, ...args: getModsListForVersionProps) => getModsListForVersion(...args));
-  ipcMain.handle("download-mod", async(_, ...args: downloadModProps) => downloadMod(mainWindow, ...args));
+  ipcMain.handle("downloadSave", async (_, fileName: string) => savesDownloads(fileName));
   ipcMain.handle("count-shaders", async (_, ...args: countShadersProps) => countShaders(...args));
   ipcMain.handle("install-shaders", async (_, ...args: installShadersProps) => installShaders(mainWindow, ...args));
   ipcMain.handle("share-shaders", async (_, ...args: shareShaders) => shareShaders(mainWindow, ...args));

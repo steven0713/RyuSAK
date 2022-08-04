@@ -1,10 +1,11 @@
-export type RyusakSaves = {
-  [key: string]: string[];
+export type MirrorFileMeta = {
+  name: string;
+  type: string;
+  mtime: string;
+  size: number;
 };
 
-export type RyusakMods = {
-  "name": string
-}[];
+export type MirrorDirMeta = Array<MirrorFileMeta>;
 
 export type RyusakShaders = {
   [key: string]: number;

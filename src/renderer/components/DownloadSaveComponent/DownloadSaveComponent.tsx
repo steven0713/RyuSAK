@@ -13,6 +13,7 @@ import {
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import useStore from "../../actions/state";
 import useTranslation from "../../i18n/I18nService";
+import Enumerable from "linq";
 
 const style = {
   position: "absolute",
@@ -42,17 +43,20 @@ const DownloadSaveComponent = () => {
   ]);
 
   useEffect(() => {
-    const keys = Object.keys(saves);
-    const index = keys.findIndex(k => k.toUpperCase() === currentSaveDownload);
-    index !== -1 && setFiles(saves[keys[index]]);
-  }, [currentSaveDownload]);
+    setFiles(
+      Enumerable.from(saves)
+                .where(save => save.name.includes(currentSaveDownload))
+                .select(save => save.name)
+                .toArray()
+    );
+  });
 
   const onModalClose = () => {
     clearCurrentSaveAction();
   };
 
-  const onSaveDownload = (index: number, filename: string) => {
-    downloadSaveAction(index, filename);
+  const onSaveDownload = (fileName: string) => {
+    downloadSaveAction(fileName);
     clearCurrentSaveAction();
   };
 
@@ -78,13 +82,13 @@ const DownloadSaveComponent = () => {
           }
         >
           {
-            files.map((s, index) => (
-              <ListItem key={s} disablePadding>
-                <ListItemButton onClick={() => onSaveDownload(index, s)}>
+            files.map(fileName => (
+              <ListItem key={fileName} disablePadding>
+                <ListItemButton onClick={() => onSaveDownload(fileName)}>
                   <ListItemIcon>
                     <FileCopyIcon />
                   </ListItemIcon>
-                  <ListItemText primary={s} />
+                  <ListItemText primary={fileName} />
                 </ListItemButton>
               </ListItem>
             ))

@@ -61,6 +61,7 @@ yarn install
 yarn start
 ```
 
-### Thanks
+### Credits
 
 * CapitaineJSparrow for creating the original [emusak-ui](https://github.com/CapitaineJSparrow/emusak-ui) project
+* Ecchibitionist for hosting the firmware, saves, shaders and mods on his CDN
