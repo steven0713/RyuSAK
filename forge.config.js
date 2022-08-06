@@ -23,7 +23,7 @@ module.exports = {
     {
       "name": "@electron-forge/maker-squirrel",
       "config": {
-        "name": "RyuSAK"
+        "setupIcon": "./icon.ico"
       }
     },
     {
@@ -33,19 +33,13 @@ module.exports = {
       ]
     },
     {
-      "name": "@electron-forge/maker-deb",
-      "config": {}
+      "name": "@electron-forge/maker-deb"
     },
     {
-      "name": "@electron-forge/maker-rpm",
-      "config": {}
+      "name": "@electron-forge/maker-rpm"
     },
     {
-      "name": "electron-forge-maker-appimage",
-      "platforms": [
-        "linux"
-      ],
-      "config": {}
+      "name": "@electron-forge/maker-flatpak"
     }
   ],
   "plugins": [
@@ -72,21 +66,15 @@ module.exports = {
       const portablePath = makeResults.map(b => b.artifacts).flat().find(i => i.includes(".zip") && i.includes("win32"));
       const exePath = makeResults.map(b => b.artifacts).flat().find(i => i.includes("Setup.exe"));
 
-      try {
-        if (portablePath) {
-          const filename = path.basename(portablePath);
-          await fs.move(portablePath, portablePath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
-        }
-      } catch(e) {
-        // fs.move is launched twice, first for dry run and second time by make from dry-run causing an exception, so ignore and assume it exists
+      if (portablePath) {
+        const filename = path.basename(portablePath);
+        await fs.move(portablePath, portablePath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
       }
 
-      try {
-        if (exePath) {
-          const filename = path.basename(exePath);
-          await fs.move(exePath, exePath.replace(filename, `RyuSAK-win32-x64-${version}-installer.exe`));
-        }
-      } catch(e) {}
+      if (exePath) {
+        const filename = path.basename(exePath);
+        await fs.move(exePath, exePath.replace(filename, `RyuSAK-win32-x64-${version}-installer.exe`));
+      }
 
       return makeResults.map(r => ({
         ...r,
@@ -96,11 +84,15 @@ module.exports = {
               const filename = path.basename(fullPath);
 
               if (fullPath.includes(".zip") && fullPath.includes("win32")) {
-                const archive = new Zip(fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
-                archive.addFile("portable", Buffer.from("portable", "utf8"), "RyuSAK is portable");
-                fs.removeSync(fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
-                archive.writeZip(fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`));
-                return fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`);
+                const zipPath = fullPath.replace(filename, `RyuSAK-win32-x64-${version}-portable.zip`);
+
+                const archive = new Zip(zipPath);
+                archive.addFile("portable", Buffer.from("portable", "utf8"));
+
+                fs.removeSync(zipPath);
+                archive.writeZip(zipPath);
+
+                return zipPath;
               }
 
               if (fullPath.includes(".exe")) {
