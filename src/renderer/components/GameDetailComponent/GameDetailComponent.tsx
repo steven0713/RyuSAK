@@ -52,6 +52,8 @@ const GameDetailComponent = () => {
     currentEmu,
     saves,
     setCurrentSaveDownloadAction,
+    mods,
+    setCurrentModAction,
     ryujinxShaders,
     downloadShadersAction,
     needRefreshShaders,
@@ -63,6 +65,8 @@ const GameDetailComponent = () => {
     state.currentEmu,
     state.saves,
     state.setCurrentSaveDownloadAction,
+    state.mods,
+    state.setCurrentModAction,
     state.ryujinxShaders,
     state.downloadShadersAction,
     state.needRefreshShaders,
@@ -149,6 +153,7 @@ const GameDetailComponent = () => {
     return null;
   }
 
+  const hasMods = Enumerable.from(mods).any(mod => mod.name.includes(metaData.titleId.toUpperCase()));
   const hasSaves = Enumerable.from(saves).any(save => save.name.includes(metaData.titleId.toUpperCase()));
   const ryusakShadersCount = ryujinxShaders[metaData.titleId.toUpperCase()] || 0;
 
@@ -212,6 +217,16 @@ const GameDetailComponent = () => {
               fullWidth
             >
               {t("openModsDir")}
+            </Button>
+          </p>
+          <p>
+            <Button
+              variant="contained"
+              fullWidth
+              disabled={!hasMods}
+              onClick={() => setCurrentModAction(metaData.titleId, dataPath)}
+            >
+              {t(hasMods ? "dlMods" : "noMods")}
             </Button>
           </p>
           <p>

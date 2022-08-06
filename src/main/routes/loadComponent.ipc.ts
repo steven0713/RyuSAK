@@ -5,11 +5,12 @@ import { SYS_SETTINGS } from "../../index";
 
 const loadComponentIpcHandler = async () => Promise.all([
   SYS_SETTINGS,
-  <Promise<RyusakShaders>>(<unknown>HttpService.downloadRyujinxShaderList()),
-  <Promise<MirrorDirMeta>>(<unknown>HttpService.downloadSaveList()),
-  <Promise<string>>(<unknown>HttpService.getFirmwareVersion()),
+  <Promise<RyusakShaders>>HttpService.downloadRyujinxShaderList(),
+  <Promise<MirrorDirMeta>>HttpService.downloadSaveList(),
+  <Promise<MirrorDirMeta>>HttpService.downloadModsTitleList(),
+  <Promise<string>>HttpService.getFirmwareVersion(),
   HttpService.getLatestApplicationVersion(),
   electron.app.getVersion(),
-  <Promise<number>>(<unknown>HttpService.getThreshold())
+  <Promise<number>>HttpService.getThreshold()
 ]);
 export default loadComponentIpcHandler;

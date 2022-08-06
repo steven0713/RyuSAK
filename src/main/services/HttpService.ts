@@ -13,12 +13,16 @@ import Enumerable from "linq";
 const CDN_URL: string = "https://fsn1-1.mirror.lewd.wtf";
 
 export enum HTTP_PATHS {
-  FIRMWARE_LIST = "/archive/nintendo/switch/firmware/?format=json",
-  FIRMWARE_ZIP  = "/archive/nintendo/switch/firmware/Firmware {fw_version}.zip",
-  SAVES_PATH    = "/archive/nintendo/switch/savegames/",
-  SHADERS_LIST  = "/archive/nintendo/switch/ryusak/shader_count.json",
-  SHADER_ZIP    = "/archive/nintendo/switch/shaders/ogl/{title_id}.zip",
-  THRESHOLD     = "/archive/nintendo/switch/ryusak/threshold.txt",
+  FIRMWARE_LIST     = "/archive/nintendo/switch/firmware/?format=json",
+  FIRMWARE_ZIP      = "/archive/nintendo/switch/firmware/Firmware {fw_version}.zip",
+  MODS_TITLE_LIST   = "/archive/nintendo/switch/mods/?format=json",
+  MODS_VERSION_LIST = "/archive/nintendo/switch/mods/{title_id}/?format=json",
+  MODS_LIST         = "/archive/nintendo/switch/mods/{title_id}/{version}/?format=json",
+  MOD_DOWNLOAD      = "/archive/nintendo/switch/mods/{title_id}/{version}/{name}/?format=json",
+  SAVES_PATH        = "/archive/nintendo/switch/savegames/",
+  SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count.json",
+  SHADER_ZIP        = "/archive/nintendo/switch/shaders/ogl/{title_id}.zip",
+  THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
 export enum OTHER_URLS {
@@ -133,6 +137,10 @@ class HttpService {
     return this._fetch(HTTP_PATHS.SAVES_PATH + "?format=json");
   }
 
+  public async downloadModsTitleList() {
+    return this._fetch(HTTP_PATHS.MODS_TITLE_LIST);
+  }
+
   public async getThreshold() {
     return this._fetch(HTTP_PATHS.THRESHOLD, "TXT").catch(() => 1E7);
   }
@@ -167,6 +175,34 @@ class HttpService {
     return fetch(`https://api.github.com/search/issues?q=${term}%20repo:Ryujinx/Ryujinx-Games-List`, {
       agent: httpAgent()
     }).then(r => r.json());
+  }
+
+  public async getModVersions(titleId: string) {
+    return this._fetch(HTTP_PATHS.MODS_VERSION_LIST.replace("{title_id}", titleId));
+  }
+
+  public async getModsForVersion(titleId: string, version: string) {
+    return this._fetch(HTTP_PATHS.MODS_LIST.replace("{title_id}", titleId).replace("{version}", version));
+  }
+
+  public async getModName(titleId: string, version: string, name: string): Promise<{ modName: string, url: string }> {
+    const path = HTTP_PATHS.MOD_DOWNLOAD
+                           .replace("{title_id}", titleId)
+                           .replace("{version}", encodeURIComponent(version))
+                           .replace("{name}", encodeURIComponent(name));
+
+    const mod = (await this._fetch(path)) as MirrorDirMeta;
+
+    if (!mod[0]) {
+      return;
+    }
+
+    const url = new URL(`${path}${encodeURIComponent(mod[0].name)}`, CDN_URL);
+
+    return {
+      modName: mod[0].name,
+      url: url.href
+    };
   }
 
   public async downloadSave(fileName: string) {

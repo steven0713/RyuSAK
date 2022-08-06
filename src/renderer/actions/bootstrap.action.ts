@@ -9,6 +9,7 @@ const { t } = useTranslation();
 interface IBootstrap {
   isAppInitialized: boolean;
   saves: MirrorDirMeta;
+  mods: MirrorDirMeta;
   ryujinxShaders: RyusakShaders;
   bootstrapAppAction: () => Promise<void>;
   firmwareVersion: string;
@@ -23,6 +24,7 @@ const lastEshopUpdate = localStorage.getItem(LS_KEYS.ESHOP_UPDATE) ? +localStora
 const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownloadManager>): IBootstrap => ({
   isAppInitialized: false,
   saves: [],
+  mods: [],
   ryujinxShaders: {},
   firmwareVersion: "",
   latestVersion: null,
@@ -33,6 +35,7 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
       settings,
       ryujinxShaders,
       saves,
+      mods,
       firmwareVersion,
       latestVersion,
       currentVersion,
@@ -66,7 +69,8 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
     return set({
       settings,
       isAppInitialized: true,
-      saves: saves,
+      saves,
+      mods,
       ryujinxShaders,
       firmwareVersion,
       latestVersion,
