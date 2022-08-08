@@ -19,20 +19,20 @@ export enum HTTP_PATHS {
   MODS_VERSION_LIST = "/archive/nintendo/switch/mods/{title_id}/?format=json",
   MODS_LIST         = "/archive/nintendo/switch/mods/{title_id}/{version}/?format=json",
   MOD_DOWNLOAD      = "/archive/nintendo/switch/mods/{title_id}/{version}/{name}/?format=json",
-  SAVES_PATH        = "/archive/nintendo/switch/savegames/",
-  SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count.json",
+  SAVES_LIST        = "/archive/nintendo/switch/savegames/?format=json",
+  SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
   SHADER_ZIP        = "/archive/nintendo/switch/shaders/ogl/{title_id}.zip",
+  SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count.json",
   THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
 export enum OTHER_URLS {
   RELEASE_INFO = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
   ESHOP_DATA   = "https://raw.githubusercontent.com/blawar/titledb/master/US.en.json",
+  GAME_BANANA  = "https://gamebanana.com/apiv7/Util/Game/NameMatch?_sName={query}&_nPerpage=10&_nPage=1",
   KEYS         = "http://emusak.coveforme.com/firmware/prod.keys",
 }
 
-// CloudFlare DNS https://1.1.1.1/dns/
-// Resolve an issue where server cannot be reached in rare cases
 dns.setServers([
   "1.1.1.1",
   "[2606:4700:4700::1111]",
@@ -48,28 +48,21 @@ const staticLookup = async (hostname: string, _: null, cb: Function) => {
   cb(null, ips[0], 4);
 };
 
-//TODO: change function into variable after removing http dependency
-const httpAgent = (useTLS: boolean = true) => {
-  const httpModule = useTLS ? https : http;
-  const lookupFunc = hasDnsFile ? staticLookup : undefined;
-
-  return new httpModule.Agent({ lookup: lookupFunc });
-};
+const agentOpts: http.AgentOptions = { lookup: hasDnsFile ? staticLookup : undefined };
+const httpAgent: http.Agent = new http.Agent(agentOpts);
+const httpsAgent: https.Agent = new https.Agent(agentOpts);
 
 class HttpService {
   // Trigger HTTP request using an exponential backoff strategy
-  protected _fetch(path: string, contentType: "JSON" | "TXT" | "BUFFER" = "JSON", baseUrl: string = CDN_URL, defaultValue = {}, retries = 5) {
-    const url = new URL(path, baseUrl);
+  protected _fetch(path: string, contentType: "JSON" | "TXT" | "BUFFER" = "JSON", retries = 3) {
+    const url = new URL(path, CDN_URL);
     return pRetry(
       async () => {
         const response = await fetch(url.href, {
-          ...defaultValue,
-          ...{
-            agent: httpAgent(url.href.includes("https:"))
-          }
+          agent: url.href.includes("https:") ? httpsAgent : httpAgent
         });
 
-        if (response.status >= 400) {
+        if (response.status >= 500) {
           throw new pRetry.AbortError(response.statusText);
         }
 
@@ -94,7 +87,7 @@ class HttpService {
 
     const response = await fetch(url.href, {
       signal: controller.signal,
-      agent: httpAgent(url.href.includes("https:"))
+      agent: url.href.includes("https:") ? httpsAgent : httpAgent
     });
 
     let chunkLength = 0;
@@ -134,7 +127,7 @@ class HttpService {
   }
 
   public async downloadSaveList() {
-    return this._fetch(HTTP_PATHS.SAVES_PATH + "?format=json");
+    return this._fetch(HTTP_PATHS.SAVES_LIST);
   }
 
   public async downloadModsTitleList() {
@@ -173,7 +166,7 @@ class HttpService {
   public async getRyujinxCompatibility(term: string) {
     // do not use this._fetch because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
     return fetch(`https://api.github.com/search/issues?q=${term}%20repo:Ryujinx/Ryujinx-Games-List`, {
-      agent: httpAgent()
+      agent: httpsAgent
     }).then(r => r.json());
   }
 
@@ -206,17 +199,11 @@ class HttpService {
   }
 
   public async downloadSave(fileName: string) {
-    return this._fetch(HTTP_PATHS.SAVES_PATH + fileName, "BUFFER");
+    return this._fetch(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER");
   }
 
   public async searchGameBana(query: string) {
-    return this._fetch(
-      `/apiv7/Util/Game/NameMatch?_sName=${query}&_nPerpage=10&_nPage=1`,
-      "JSON",
-      "https://gamebanana.com",
-      {},
-      1
-    );
+    return this._fetch(OTHER_URLS.GAME_BANANA.replace("{query}", query));
   }
 }
 
