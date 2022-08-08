@@ -28,6 +28,7 @@ export enum HTTP_PATHS {
 
 export enum OTHER_URLS {
   RELEASE_INFO = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
+  COMPAT_LIST  = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
   ESHOP_DATA   = "https://raw.githubusercontent.com/blawar/titledb/master/US.en.json",
   GAME_BANANA  = "https://gamebanana.com/apiv7/Util/Game/NameMatch?_sName={query}&_nPerpage=10&_nPage=1",
   KEYS         = "http://emusak.coveforme.com/firmware/prod.keys",
@@ -146,13 +147,16 @@ class HttpService {
   }
 
   public async getLatestApplicationVersion() {
-    const versionResponse = await this._fetch(OTHER_URLS.RELEASE_INFO).catch(() => null);
-    if (!versionResponse) {
-      // If we cannot fetch the latest version return the current version to avoid trigger logic when ryusak is not up to date
+    const response = await fetch(OTHER_URLS.RELEASE_INFO, {
+      agent: httpsAgent
+    });
+
+    if (response.status != 200) {
       return app.getVersion();
     }
 
-    return versionResponse.tag_name.replace("v", "");
+    const responseJson = await response.json() as any;
+    return responseJson.tag_name.replace("v", "");
   }
 
   public async downloadKeys() {
@@ -163,9 +167,9 @@ class HttpService {
     return this._fetch(OTHER_URLS.ESHOP_DATA);
   }
 
-  public async getRyujinxCompatibility(term: string) {
-    // do not use this._fetch because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
-    return fetch(`https://api.github.com/search/issues?q=${term}%20repo:Ryujinx/Ryujinx-Games-List`, {
+  public async getRyujinxCompatibility(query: string) {
+    // Do not use this._fetch because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
+    return fetch(OTHER_URLS.COMPAT_LIST.replace("{query}", query), {
       agent: httpsAgent
     }).then(r => r.json());
   }
