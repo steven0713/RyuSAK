@@ -264,7 +264,7 @@ const GameDetailComponent = () => {
                         <InfoIcon />
                       </IconButton>
                     </Tooltip>
-                    <code style={{ position: "relative", top: -3 }}>{threshold > 1E6 ? "Disabled temporary" : threshold}</code>
+                    <code style={{ position: "relative", top: -3 }}>{threshold}</code>
                   </h3>
                 </Grid>
               )
@@ -286,10 +286,10 @@ const GameDetailComponent = () => {
                       <Button
                         variant="contained"
                         fullWidth
-                        disabled={true}//{(ryusakShadersCount + threshold) >= localShadersCount}
+                        disabled={threshold == -1 ? true : ((ryusakShadersCount + threshold) >= localShadersCount)}
                         onClick={() => shareShaders(metaData.titleId, dataPath, localShadersCount, ryusakShadersCount)}
                       >
-                        {/*threshold >= 1E6 ? "Sharing shaders disabled" : t("shareShaders")*/ "Shader uploading is currently unavailable"}
+                        {threshold == -1 ? "Shader uploading is currently unavailable" : t("shareShaders")}
                       </Button>
                     </p>
                   </Box>

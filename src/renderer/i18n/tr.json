@@ -60,7 +60,7 @@
   "shaderInfo": "Shaderlar; arazi, karakterler, patlamalar ve çimen gibi grafiklerin oluşturulmasından sorumlu, grafik işlemci biriminde çalışan küçük programlardır. Bilgisayar shaderları doğrudan anlayıp işleyemediği için önce işleyebileceği bir biçime çevirmesi gerekmektedir. Bu çeviri süreci zaman alır. Bunu iki şekilde görebilirsiniz:<br /><br />- Yeni görülen shaderlar emülasyonun çeviri işlemini bitene kadar duraksamasına sebep olur, bu da kullanıcıya duraksamalar ve fps düşmesi şeklinde gözükür. Bir oyunu ilk defa açtığınızda birçok çeviri işlemi gerçekleşecektir. Oynadıkça bu yavaşlamalar azalacaktır.<br /><br />- Emülator oyunun kullandığı shaderları işledikten sonra kaydedecektir (belleğe alacaktır). Oyunu tekrar açtığınızda emülatör önceki duraksamaların yaşanmaması için belleklenen shaderları yükleyeceğinden oyun daha yavaş açılacaktır.",
   "shaderThreshold": "Bu sayı shader paylaşma alt limitidir. Yerel shader sayınız RyuSAK'taki shader sayısından bu sayı kadar fazla ise shaderlarınızı paylaşabilirsiniz. Bu sayı paylaşan kişi sayısına ve meşguliyet durumumuza bağlıdır. Paylaşılan shaderları gözden geçirmemiz çok zaman aldığı için alt limitin altındaki eklemeler gözden geçirmemize değmez. Aşırı yüklenmeyi engellemek için şimdilik kişi başına saat başı 3 tane shader paylaşımı yapılabilir.",
   "localShadersCount": "Yerel shader sayısı",
-  "ryusakShadersCount": "Ryusak shader sayısı",
+  "ryusakShadersCount": "RyuSAK shader sayısı",
   "dlShaders": "Shader indir",
   "shareShaders": "Shader paylaş",
   "shaders": "Shaders",

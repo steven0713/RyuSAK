@@ -60,7 +60,7 @@
   "shaderInfo": "Shaders são pequenos códigos executados diretamente na GPU e são responsáveis pela renderização de terrenos, personagens, efeitos, grama, etc. Já que um Comptutador não pode executar o código Shader diretamente, primeiro é necessário converte-los em um formato que o Computador consegue processar. Esse processo de conversão consome tempo e você o perceberá de duas formas:<br /><br />- Qualquer animação nova com um shader não processado, causará uma pausa na emulação até ser processado, o que causa lag/stuttering e quedas no FPS. Quando você carrega um jogo pela primeira vez, muitas conversões são realizadas. Quanto mais você joga, mais Shaders são processados e menos lag/stuttering acontece.<br /><br />- O Emulador irá salver todos os Shaders que o jogo utiliza, criando um Cache deles. Quando você inicia um jogo, o emulador leva um pequeno tempo para carregar o Cache de shaders pré-salvos a fim de evitar lags e stutterings.",
   "shaderThreshold": "Isso significa que você pode compartilhar Shaders se a contagem de Shaders que você tem localmente com tempo jogado é maior que a contagem que o RyuSAK tem salvo na nuvem. Esse valor é baseado em quantos envios nós já recebemos e na nossa capacidade de processamento. Analisar o envio dos usuários consome bastante tempo e não vale a pena se a contagem de Shaders local do usuário é menor do que a Contagem da Nuvem do RyuSAK. Por enquanto, os envios estão limitados a 3 por usuário a cada hora.",
   "localShadersCount": "Contador de Shaders Local",
-  "ryusakShadersCount": "Contador de Shaders na Nuvem do Ryusak",
+  "ryusakShadersCount": "Contador de Shaders na Nuvem do RyuSAK",
   "dlShaders": "Baixar shaders",
   "shareShaders": "Enviar shaders",
   "shaders": "Shaders",

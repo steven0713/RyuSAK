@@ -60,7 +60,7 @@
   "shaderInfo": "Shaders are small programs running on a graphics card that are responsible for rendering graphics like terrain, characters, explosions, grass etc. Since a PC cannot directly execute the Switch's shaders, it first has to translate them to a format your PC can understand. This translation process is time consuming and you'll notice it in two ways:<br /><br />- Any new shaders that are encountered will cause the emulation to pause until the translation is done, which causes stuttering and FPS drops. When you load a game for the first time a lot of translation will happen. By playing more this stuttering decreases rapidly.<br /><br />- The emulator will save any shaders a game uses (AKA it caches them). When you launch a game, the emulator will take some time loading saved shaders, to prevent the stuttering from happening again.",
   "shaderThreshold": "You can share Shaders if your local Shader count surpasses RyuSAK's count by at least this value. This is based on how many submissions we already have and our workload. Reviewing submissions is very time consuming and it is not worth our effort if the additional shader count is below the threshold. Submissions are limited to 3 per user per hour for now to prevent overloading the servers.",
   "localShadersCount": "Local shader count",
-  "ryusakShadersCount": "Ryusak shader count",
+  "ryusakShadersCount": "RyuSAK shader count",
   "dlShaders": "Download shaders",
   "shareShaders": "Share shaders",
   "shaders": "Shaders",

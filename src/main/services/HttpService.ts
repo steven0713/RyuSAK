@@ -21,8 +21,8 @@ export enum HTTP_PATHS {
   MOD_DOWNLOAD      = "/archive/nintendo/switch/mods/{title_id}/{version}/{name}/?format=json",
   SAVES_LIST        = "/archive/nintendo/switch/savegames/?format=json",
   SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
-  SHADER_ZIP        = "/archive/nintendo/switch/shaders/ogl/{title_id}.zip",
-  SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count.json",
+  SHADER_ZIP        = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
+  SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
   THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
@@ -135,7 +135,7 @@ class HttpService {
   }
 
   public async getThreshold() {
-    return this._fetch(HTTP_PATHS.THRESHOLD, "TXT").catch(() => 1E7);
+    return this._fetch(HTTP_PATHS.THRESHOLD, "TXT").catch(() => -1);
   }
 
   public async getFirmwareVersion() {
