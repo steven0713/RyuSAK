@@ -15,10 +15,10 @@ The Windows build also comes with an auto update feature.
 ### Windows
 
 #### Install
-Download the `RyuSAK-win32-x64-X.Y.Z-installer.exe` file, then install it by running the installer
+Download the `RyuSAK-X.Y.Z Setup.exe` file, then install it by running the installer
 
 #### Portable
-Download the `RyuSAK-win32-x64-X.Y.Z-portable.zip` file, then unzip it to your chosen location
+Download the `RyuSAK-win32-x64-X.Y.Z.zip` file, then unzip it to your chosen location
 
 ### Linux
 
@@ -30,6 +30,9 @@ Download the `ryusak_X.Y.Z_amd64.deb` file, then install it with `sudo dpkg -i .
 
 #### Red Hat Linux
 Download the `RyuSAK-X.Y.Z-1.x86_64.rpm` file, then install it with `sudo rpm -i /RyuSAK-X.Y.Z-1.x86_64.rpm`
+
+#### Portable
+Download the `RyuSAK-linux-x64-X.Y.Z.zip` file, then unzip it to your chosen location
 
 ## Features
 * Add one or multiple Ryujinx folders (where `Ryujinx.exe` is located) to manage different builds (such as mainline, portable, LDN, etc.) 
@@ -46,11 +49,14 @@ Download the `RyuSAK-X.Y.Z-1.x86_64.rpm` file, then install it with `sudo rpm -i
 Requirements:
 * NodeJS v14+
 
-Install & run:
+Install dependencies:
 ```
 npm install --include=dev
-npm start
+npm run tinfoil
+npm run eshop
 ```
+
+Run local build: `npm start`
 
 ## Credits
 * CapitaineJSparrow for creating the original [emusak-ui](https://github.com/CapitaineJSparrow/emusak-ui) project
