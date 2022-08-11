@@ -5,7 +5,7 @@
 ![showLicense](https://img.shields.io/github/license/Ecks1337/RyuSAK?style=for-the-badge)
 
 <p align="center">
-  <img width="80%" alt="screenshot" src="https://raw.githubusercontent.com/Ecks1337/RyuSAK/master/screenshot_1.png" />
+  <img width="80%" alt="screenshot" src="https://raw.githubusercontent.com/Ecks1337/RyuSAK/master/screenshot.png" />
 </p>
 
 ## Installation
@@ -47,7 +47,7 @@ Download the `RyuSAK-linux-x64-X.Y.Z.zip` file, then unzip it to your chosen loc
 
 ## Contributing
 Requirements:
-* NodeJS v14+
+* NodeJS v14.20.0
 
 Install dependencies:
 ```
