@@ -1,6 +1,5 @@
 import path from "path";
-import { app, dialog } from "electron";
-import { RyusakEmulatorGames, RyusakEmulatorMode } from "../../types";
+import { RyusakEmulatorGames } from "../../types";
 import customDatabase from "../../assets/custom_database.json";
 import tinfoilDatabase from "../../assets/tinfoildb.json";
 import getEshopData from "../services/eshopData";
@@ -8,35 +7,6 @@ import fs from "fs-extra";
 
 const tfDb: typeof tinfoilDatabase = tinfoilDatabase;
 const csDb: typeof customDatabase = customDatabase;
-
-export const emulatorFilesystem = async (binaryPath: string): Promise<RyusakEmulatorMode> => {
-  const fitgirlDataPath = path.resolve(binaryPath, "..", "..", "data", "games");
-  const isFitgirlRepack = await fs.stat(fitgirlDataPath).then(() => true).catch(() => false);
-
-  if (isFitgirlRepack) {
-    dialog.showMessageBox({
-      title: "Fitgirl strikes again",
-      message: "RyuSAK does not support Fitgirl repacks, please setup Ryujinx yourself and delete this configuration.",
-      type: "error",
-      buttons: ["Ok"],
-    });
-  }
-
-  const portableDataPath = path.resolve(binaryPath, "..", "portable");
-  const isPortable = await fs.stat(portableDataPath).then(() => true).catch(() => false);
-
-  if (isPortable) {
-    return {
-      mode: "portable",
-      dataPath: portableDataPath
-    };
-  }
-
-  return {
-    mode: "global",
-    dataPath: path.resolve(app.getPath("appData"), "Ryujinx")
-  };
-};
 
 export const scanGamesForConfig = async (dataPath: string): Promise<RyusakEmulatorGames> => {
   try {

@@ -1,13 +1,12 @@
-import { ipcMain, BrowserWindow } from "electron";
+import { app, ipcMain, BrowserWindow } from "electron";
 import loadComponentIpcHandler from "./loadComponent.ipc";
 import {
-  emulatorFilesystem,
   scanGamesForConfig,
   buildMetadataForTitleId,
   deleteGameProps,
   deleteGame
 } from "./emulatorFilesystem";
-import { addEmulatorConfigurationIpc, createDefaultConfigActionForEmu } from "./addEmulatorConfiguration.ipc";
+import getDirectory from "./getDirectory.ipc";
 import installFirmware from "./firmware.ipc";
 import { installKeys } from "./installKeys";
 import updateEshopData from "./eshopData.ipc";
@@ -27,12 +26,11 @@ import { toggleCustomDnsResolver } from "./dns.ipc";
 import { hasDnsFile } from "../../index";
 import { searchGameBana, searchProps } from "./gamebanana";
 import { setProxy } from "./settings.ipc";
+import * as path from "path";
 
 export type IPCCalls = {
   "load-components": Promise<ReturnType<typeof loadComponentIpcHandler>>,
-  "add-emulator-folder": Promise<ReturnType<typeof addEmulatorConfigurationIpc>>,
-  "system-scan-for-config": Promise<ReturnType<typeof emulatorFilesystem>>,
-  "build-default-emu-config": Promise<ReturnType<typeof createDefaultConfigActionForEmu>>,
+  "get-directory": Promise<ReturnType<typeof getDirectory>>,
   "scan-games": Promise<ReturnType<typeof scanGamesForConfig>>,
   "build-metadata-from-titleId": Promise<ReturnType<typeof buildMetadataForTitleId>>,
   "install-firmware": Promise<ReturnType<typeof installFirmware>>,
@@ -52,13 +50,12 @@ export type IPCCalls = {
   "search-gamebanana": ReturnType<typeof searchGameBana>,
   "delete-game": ReturnType<typeof deleteGame>,
   "set-proxy": ReturnType<typeof setProxy>,
+  "get-ryujinx-appdata-path": string,
 };
 
 const makeIpcRoutes = (mainWindow: BrowserWindow) => {
   ipcMain.handle("load-components", async (_) => loadComponentIpcHandler());
-  ipcMain.handle("add-emulator-folder", async (_) => addEmulatorConfigurationIpc(mainWindow));
-  ipcMain.handle("system-scan-for-config", async (_, path: string) => emulatorFilesystem(path));
-  ipcMain.handle("build-default-emu-config", async (_) => createDefaultConfigActionForEmu());
+  ipcMain.handle("get-directory", async (_) => getDirectory(mainWindow));
   ipcMain.handle("scan-games", async (_, dataPath: string) => scanGamesForConfig(dataPath));
   ipcMain.handle("build-metadata-from-titleId", async (_, titleId: string) => buildMetadataForTitleId(titleId));
   ipcMain.handle("install-firmware", async (_, dataPath: string, fwVersion: string) => installFirmware(dataPath, fwVersion, mainWindow));
@@ -78,6 +75,7 @@ const makeIpcRoutes = (mainWindow: BrowserWindow) => {
   ipcMain.handle("search-gamebanana", async (_, ...args: searchProps) => searchGameBana(...args));
   ipcMain.handle("delete-game", (_, ...args: deleteGameProps) => deleteGame(...args));
   ipcMain.handle("set-proxy", async (_, proxy: string) => setProxy(proxy));
+  ipcMain.handle("get-ryujinx-appdata-path", (_) => path.resolve(app.getPath("appData"), "Ryujinx"));
 };
 
 export default makeIpcRoutes;

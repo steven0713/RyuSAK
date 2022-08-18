@@ -62,7 +62,7 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
 
     await Swal.fire({
       icon: "info",
-      text: `${t("pickRyuBin")}. ${t("shadersCheck")}`,
+      text: `${t("pickRyuDataPath")}. ${t("shadersCheck")}`,
       allowOutsideClick: false
     });
     const state = useStore.getState();

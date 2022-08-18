@@ -24,7 +24,7 @@ const getEshopData = async () => {
   if (localData) {
     data = JSON.parse(await fs.readFile(eshopDataPath(), "utf-8"));
   } else {
-    data = eshopDataBuildIn as unknown as EshopData;
+    data = eshopDataBuildIn as EshopData;
   }
 
   return data;

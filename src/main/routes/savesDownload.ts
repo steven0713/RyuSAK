@@ -4,10 +4,10 @@ import fs from "fs-extra";
 import path from "path";
 
 const downloadSave = async (fileName: string) => {
-  const buffer = await HttpService.downloadSave(fileName);
+  const buffer = await HttpService.downloadSave(fileName) as ArrayBuffer;
   const desktopPath = app.getPath("desktop");
   const fileDest = path.resolve(desktopPath, fileName);
-  await fs.writeFile(fileDest, Buffer.from(buffer as unknown as ArrayBuffer));
+  await fs.writeFile(fileDest, Buffer.from(buffer));
   shell.showItemInFolder(fileDest);
 };
 

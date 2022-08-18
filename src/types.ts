@@ -11,7 +11,7 @@ export type RyusakShaders = {
   [key: string]: number;
 };
 
-export type RyusakEmulatorConfig = {
+export type RyujinxConfigMeta = {
   path: string,
   name: string,
   isDefault?: boolean,
@@ -25,11 +25,6 @@ export enum LS_KEYS {
   ESHOP_UPDATE = "ryusak-eshop-update-date-2",
   LOCALE = "ryusak-locale"
 }
-
-export type RyusakEmulatorMode = {
-  mode: "global" | "portable" | "fitgirl" | "pinejinx" | "pinejinxLdn",
-  dataPath: string
-};
 
 export type RyusakEmulatorGames = string[];
 

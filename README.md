@@ -15,7 +15,7 @@ The Windows build also comes with an auto update feature.
 ### Windows
 
 #### Install
-Download the `RyuSAK-X.Y.Z Setup.exe` file, then install it by running the installer
+Download the `RyuSAK-X.Y.Z.Setup.exe` file, then install it by running the installer
 
 #### Portable
 Download the `RyuSAK-win32-x64-X.Y.Z.zip` file, then unzip it to your chosen location

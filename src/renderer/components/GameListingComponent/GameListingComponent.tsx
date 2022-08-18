@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import "./gameListing.css";
-import { RyusakEmulatorConfig, RyusakEmulatorMode } from "../../../types";
+import { RyujinxConfigMeta } from "../../../types";
 import useStore from "../../actions/state";
 import { Box, Button, Divider, Grid, TextField, Tooltip } from "@mui/material";
 import jackSober from "../../resources/jack_sober.png";
@@ -13,9 +13,8 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
 import { invokeIpc } from "../../utils";
 
-interface IEmulatorContainer {
-  config: RyusakEmulatorConfig;
-  mode: RyusakEmulatorMode;
+interface IConfigContainer {
+  config: RyujinxConfigMeta;
 }
 
 const Label = styled(Paper)(({ theme }) => ({
@@ -42,7 +41,7 @@ const Cover = styled(Box)(() => ({
   backgroundSize: "cover",
 }));
 
-const GameListingComponent = ({ config, mode }: IEmulatorContainer) => {
+const GameListingComponent = ({ config }: IConfigContainer) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [openAlertAction] = useStore(s => [s.openAlertAction]);
@@ -54,7 +53,7 @@ const GameListingComponent = ({ config, mode }: IEmulatorContainer) => {
   // 1. Scan games on user system
   // 2. Build metadata from eshop with titleId as argument
   const createLibrary = async () => {
-    const titleIds = await invokeIpc("scan-games", mode.dataPath);
+    const titleIds = await invokeIpc("scan-games", config.path);
     const gamesCollection: { title: string, img: string, titleId: string }[]  = await Promise.all(titleIds.map(async (i: string) => invokeIpc("build-metadata-from-titleId", i)));
     setGames(gamesCollection.filter(i => i.title !== "0000000000000000")); // Homebrew app
   };
@@ -76,7 +75,7 @@ const GameListingComponent = ({ config, mode }: IEmulatorContainer) => {
   };
 
   const onGameDetailClick = (titleId: string) => {
-    navigate("/detail", { state: { titleId, dataPath: mode.dataPath } });
+    navigate("/detail", { state: { titleId, dataPath: config.path } });
   };
 
   if ((games.length === 0 || filteredGames.length === 0 || !isLoaded) && searchTerm.length === 0) {
@@ -95,38 +94,32 @@ const GameListingComponent = ({ config, mode }: IEmulatorContainer) => {
   }
 
   return (
-    <>
-      {
-        mode && (
-          <Stack className="masonry" spacing={2}>
-            <Grid container>
-              <Grid item xs={10} pr={2}>
-                <TextField type="search" variant="standard" label={t("filter").replace("{{LENGTH}}", `${games.length}`)} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} fullWidth />
+    <Stack className="masonry" spacing={2}>
+      <Grid container>
+        <Grid item xs={10} pr={2}>
+          <TextField type="search" variant="standard" label={t("filter").replace("{{LENGTH}}", `${games.length}`)} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} fullWidth />
+        </Grid>
+        <Grid item xs={2}>
+          <Button onClick={refreshLibrary} startIcon={<RefreshIcon />} variant="outlined" fullWidth>{t("refresh")}</Button>
+        </Grid>
+      </Grid>
+      <Grid container spacing={2} pr={4}>
+        {
+          filteredGames
+            .sort((a, b) => a.title.localeCompare(b.title))
+            .map((item, index) => (
+              <Grid tabIndex={index} className="game" item xs={2} onClick={() => onGameDetailClick(item.titleId)} style={{ cursor: "pointer" }} key={index}>
+                <Tooltip arrow placement="top" title={item.title}>
+                  <div>
+                    <Label>{item.title}</Label>
+                    <Cover style={{ backgroundImage: `url(${item.img.length > 0 ? item.img : defaultIcon})` }} />
+                  </div>
+                </Tooltip>
               </Grid>
-              <Grid item xs={2}>
-                <Button onClick={refreshLibrary} startIcon={<RefreshIcon />} variant="outlined" fullWidth>{t("refresh")}</Button>
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} pr={4}>
-              {
-                filteredGames
-                  .sort((a, b) => a.title.localeCompare(b.title))
-                  .map((item, index) => (
-                    <Grid tabIndex={index} className="game" item xs={2} onClick={() => onGameDetailClick(item.titleId)} style={{ cursor: "pointer" }} key={index}>
-                      <Tooltip arrow placement="top" title={item.title}>
-                        <div>
-                          <Label>{item.title}</Label>
-                          <Cover style={{ backgroundImage: `url(${item.img.length > 0 ? item.img : defaultIcon})` }} />
-                        </div>
-                      </Tooltip>
-                    </Grid>
-                  ))
-              }
-            </Grid>
-          </Stack>
-        )
-      }
-    </>
+            ))
+        }
+      </Grid>
+    </Stack>
   );
 };
 
