@@ -32,37 +32,37 @@ const DownloadSaveComponent = () => {
   const [files, setFiles] = React.useState<string[]>([]);
   const [
     saves,
-    clearCurrentSaveAction,
-    currentSaveDownload,
+    clearSelectedTitleIdAction,
+    selectedTitleId,
     downloadSaveAction
   ] = useStore(state => [
     state.saves,
-    state.clearCurrentSaveAction,
-    state.currentSaveDownload,
+    state.clearSelectedTitleIdAction,
+    state.selectedTitleId,
     state.downloadSaveAction
   ]);
 
   useEffect(() => {
     setFiles(
       Enumerable.from(saves)
-                .where(save => save.name.includes(currentSaveDownload))
+                .where(save => save.name.includes(selectedTitleId))
                 .select(save => save.name)
                 .toArray()
     );
-  }, [saves]);
+  }, [selectedTitleId]);
 
   const onModalClose = () => {
-    clearCurrentSaveAction();
+    clearSelectedTitleIdAction();
   };
 
   const onSaveDownload = (fileName: string) => {
     downloadSaveAction(fileName);
-    clearCurrentSaveAction();
+    clearSelectedTitleIdAction();
   };
 
   return (
     <Modal
-      open={!!currentSaveDownload}
+      open={!!selectedTitleId}
       onClose={onModalClose}
     >
       <Box sx={style}>

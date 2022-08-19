@@ -4,15 +4,18 @@ import fs from "fs-extra";
 import AdmZip from "adm-zip";
 import HttpService, { HTTP_PATHS } from "../services/HttpService";
 
-
 const installFirmware = async (dataPath: string, fwVersion: string, mainWindow: BrowserWindow) => {
-  const zipPath = path.resolve(app.getPath("temp"), "firmware.zip");
+  const zipPath = path.resolve(app.getPath("temp"), "firmware.zip"); // Do not change the name of the zip
 
   try {
     const result = await HttpService.fetchWithProgress(HTTP_PATHS.FIRMWARE_ZIP.replace("{fw_version}", fwVersion), zipPath, mainWindow, "firmware.zip");
 
     if (!result) {
       return { error: true, code: "FETCH_FAILED" };
+    }
+
+    if (!await fs.pathExists(zipPath)) {
+      return { error: true, code: "OPERATION_CANCELED" };
     }
 
     const zip = new AdmZip(zipPath);

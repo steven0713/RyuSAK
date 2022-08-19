@@ -5,25 +5,27 @@ import Swal from "sweetalert2";
 import { invokeIpc } from "../utils";
 
 export interface ISaveAction {
-  currentSaveDownload?: string,
+  selectedTitleId?: string,
   setCurrentSaveDownloadAction: (id: string) => void,
-  clearCurrentSaveAction: () => void,
+  clearSelectedTitleIdAction: () => void,
   downloadSaveAction: (fileName: string) => void,
 }
 
 const createDownloadSaveSlice = (set: SetState<ISaveAction & IDownloadManager>): ISaveAction => ({
-  currentSaveDownload: null,
-  setCurrentSaveDownloadAction: (currentSaveDownload) => set({ currentSaveDownload }),
-  clearCurrentSaveAction: () => set({ currentSaveDownload: null }),
+  selectedTitleId: null,
+  setCurrentSaveDownloadAction: (selectedTitleId) => {
+    set({ selectedTitleId })
+  },
+  clearSelectedTitleIdAction: () => set({ selectedTitleId: null }),
   downloadSaveAction: async (fileName) => {
     const state = useStore.getState();
     state.upsertFileAction({
-      filename: state.currentSaveDownload,
+      filename: state.selectedTitleId,
       downloadSpeed: Infinity,
       progress: Infinity
     });
     await invokeIpc("downloadSave", fileName);
-    state.removeFileAction(state.currentSaveDownload);
+    state.removeFileAction(state.selectedTitleId);
     Swal.fire({
       icon: "success",
       text: `${fileName} has been placed on your desktop`
