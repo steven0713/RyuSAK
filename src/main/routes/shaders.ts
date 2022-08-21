@@ -3,7 +3,7 @@ import path from "path";
 import zip from "adm-zip";
 import HttpService, { HTTP_PATHS } from "../services/HttpService";
 import { BrowserWindow, dialog } from "electron";
-import { buildMetadataForTitleId } from "./emulatorFilesystem";
+import EShopMetaService from "../services/EShopMetaService";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { Buffer } from "buffer";
 
@@ -168,7 +168,7 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
   ryujinxConfig = updateConfig(ryujinxConfig);
   await fs.promises.writeFile(hasLdnConfigFile ? ldnConfigPath : standardConfigPath, JSON.stringify(ryujinxConfig, null, 2), "utf-8");
 
-  const metadata = await buildMetadataForTitleId(titleId);
+  const metadata = await EShopMetaService.getEShopMeta(titleId);
   const result = await asyncReadRyujinxProcess(ryuBinary).catch(() => false);
 
   if (!result) {
@@ -176,7 +176,7 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
   }
 
   if (result.ranTitleId.toLowerCase() !== titleId.toLowerCase()) {
-    return { error: true, code: `You shared the wrong titleID, you had to run ${metadata.title || metadata.titleId} in Ryujinx` };
+    return { error: true, code: `You shared the wrong titleID, you had to run ${metadata.name || metadata.id} in Ryujinx` };
   }
 
   /**

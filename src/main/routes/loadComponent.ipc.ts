@@ -8,7 +8,7 @@ const loadComponentIpcHandler = async () => Promise.all([
   <Promise<RyusakShaders>>HttpService.downloadRyujinxShaderList(),
   <Promise<MirrorDirMeta>>HttpService.downloadSaveList(),
   <Promise<MirrorDirMeta>>HttpService.downloadModsTitleList(),
-  <Promise<string>>HttpService.getFirmwareVersion(),
+  HttpService.getFirmwareVersion(),
   HttpService.getLatestApplicationVersion(),
   electron.app.getVersion(),
   <Promise<number>>HttpService.getThreshold()

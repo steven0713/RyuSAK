@@ -2,14 +2,13 @@ import { app, ipcMain, BrowserWindow } from "electron";
 import loadComponentIpcHandler from "./loadComponent.ipc";
 import {
   scanGamesForConfig,
-  buildMetadataForTitleId,
   deleteGameProps,
   deleteGame
 } from "./emulatorFilesystem";
 import getDirectory from "./getDirectory.ipc";
 import installFirmware from "./firmware.ipc";
 import { installKeys } from "./installKeys";
-import updateEshopData from "./eshopData.ipc";
+import EShopMetaService from "../services/EShopMetaService";
 import openFolderForGame, { openFolderIPCProps } from "./openFolderForGame";
 import ryujinxCompatibility, { ryujinxCompatibilityProps } from "./ryujinxCompatibility";
 import savesDownloads from "./savesDownload";
@@ -32,10 +31,10 @@ export type IPCCalls = {
   "load-components": Promise<ReturnType<typeof loadComponentIpcHandler>>,
   "get-directory": Promise<ReturnType<typeof getDirectory>>,
   "scan-games": Promise<ReturnType<typeof scanGamesForConfig>>,
-  "build-metadata-from-titleId": Promise<ReturnType<typeof buildMetadataForTitleId>>,
+  "build-metadata-from-titleId": Promise<ReturnType<typeof EShopMetaService.getEShopMeta>>,
   "install-firmware": Promise<ReturnType<typeof installFirmware>>,
   "install-keys": Promise<ReturnType<typeof installKeys>>,
-  "update-eshop-data": ReturnType<typeof updateEshopData>,
+  "update-eshop-data": ReturnType<typeof EShopMetaService.updateEShopData>,
   "openFolderForGame": ReturnType<typeof openFolderForGame>,
   "getRyujinxCompatibility": ReturnType<typeof ryujinxCompatibility>,
   "downloadSave": ReturnType<typeof savesDownloads>,
@@ -57,10 +56,10 @@ const makeIpcRoutes = (mainWindow: BrowserWindow) => {
   ipcMain.handle("load-components", async (_) => loadComponentIpcHandler());
   ipcMain.handle("get-directory", async (_) => getDirectory(mainWindow));
   ipcMain.handle("scan-games", async (_, dataPath: string) => scanGamesForConfig(dataPath));
-  ipcMain.handle("build-metadata-from-titleId", async (_, titleId: string) => buildMetadataForTitleId(titleId));
+  ipcMain.handle("build-metadata-from-titleId", async (_, titleId: string) => EShopMetaService.getEShopMeta(titleId));
   ipcMain.handle("install-firmware", async (_, dataPath: string, fwVersion: string) => installFirmware(dataPath, fwVersion, mainWindow));
   ipcMain.handle("install-keys", async (_, dataPath: string) => installKeys(dataPath));
-  ipcMain.handle("update-eshop-data", async () => updateEshopData());
+  ipcMain.handle("update-eshop-data", async () => EShopMetaService.updateEShopData());
   ipcMain.handle("openFolderForGame", async (_, ...args: openFolderIPCProps) => openFolderForGame(...args));
   ipcMain.handle("getRyujinxCompatibility", async (_, ...args: ryujinxCompatibilityProps) => ryujinxCompatibility(...args));
   ipcMain.handle("downloadSave", async (_, fileName: string) => savesDownloads(fileName));

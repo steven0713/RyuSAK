@@ -18,6 +18,16 @@ export type RyujinxConfigMeta = {
   selected?: boolean
 };
 
+export type EShopTitleMeta = {
+  id: string;
+  name: string;
+  iconUrl: string;
+};
+
+export type EShopTitles = {
+  [key: string]: EShopTitleMeta;
+};
+
 export enum LS_KEYS {
   CONFIG = "v2-emulators-bin",
   TOS = "v2-tos",

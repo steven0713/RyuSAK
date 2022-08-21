@@ -6,8 +6,6 @@
   "repository": "https://github.com/Ecks1337/RyuSAK",
   "main": ".webpack/main",
   "scripts": {
-    "tinfoil": "node ./src/commands/dumpTinFoil.js",
-    "eshop": "node ./src/commands/dumpEshopData.js",
     "start": "cross-env NODE_ENV=development electron-forge start",
     "build": "electron-forge package",
     "make": "electron-forge make --skip-package",
@@ -57,6 +55,7 @@
     "@mui/material": "^5.0.4",
     "@types/semver": "^7.3.9",
     "adm-zip": "^0.5.9",
+    "async-mutex": "^0.3.2",
     "cheerio": "^1.0.0-rc.10",
     "cross-fetch": "^3.1.4",
     "electron-is-dev": "^2.0.0",

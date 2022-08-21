@@ -29,7 +29,7 @@ export enum HTTP_PATHS {
 export enum OTHER_URLS {
   RELEASE_INFO = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
   COMPAT_LIST  = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
-  ESHOP_DATA   = "https://raw.githubusercontent.com/blawar/titledb/master/US.en.json",
+  ESHOP_DATA   = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
   GAME_BANANA  = "https://gamebanana.com/apiv7/Util/Game/NameMatch?_sName={query}&_nPerpage=10&_nPage=1",
   KEYS         = "http://emusak.coveforme.com/firmware/prod.keys",
 }
@@ -156,7 +156,9 @@ class HttpService {
     }
 
     const responseJson = await response.json() as any;
-    return responseJson.tag_name.replace("v", "");
+    const tagName = responseJson.tag_name as string;
+
+    return tagName.replace("v", "");
   }
 
   public async downloadKeys() {
@@ -164,7 +166,7 @@ class HttpService {
   }
 
   public async downloadEshopData() {
-    return this._fetch(OTHER_URLS.ESHOP_DATA);
+    return this._fetch(OTHER_URLS.ESHOP_DATA, "TXT");
   }
 
   public async getRyujinxCompatibility(query: string) {

@@ -13,7 +13,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useStore from "../../actions/state";
 import { shell } from "electron";
 import useTranslation from "../../i18n/I18nService";
-import { GithubIssue, GithubLabel } from "../../../types";
+import { GithubIssue, GithubLabel, EShopTitleMeta } from "../../../types";
 import Swal from "sweetalert2";
 import InfoIcon from "@mui/icons-material/Info";
 import defaultIcon from "../../resources/default_icon.jpg";
@@ -73,7 +73,7 @@ const GameDetailComponent = () => {
     state.deletedGame,
     state.threshold
   ]);
-  const [metaData, setMetaData]: [{ img: string, title: string, titleId: string }, Function] = useState(null);
+  const [metaData, setMetaData]: [EShopTitleMeta, Function] = useState(null);
   const [compat, setCompat] = useState<GithubLabel[]>(null);
   const [_compatMode, setCompatMode] = useState<GithubIssue["mode"]>(null);
   const [localShadersCount, setLocalShadersCount] = useState(0);
@@ -103,7 +103,7 @@ const GameDetailComponent = () => {
     });
 
     return shell.openExternal(compat.length > 0
-      ? `https://github.com/Ryujinx/Ryujinx-Games-List/issues?q=is%3Aissue+is%3Aopen+${_compatMode === "name" ? metaData.title : metaData.titleId}`
+      ? `https://github.com/Ryujinx/Ryujinx-Games-List/issues?q=is%3Aissue+is%3Aopen+${_compatMode === "name" ? metaData.name : metaData.id}`
       : "https://github.com/Ryujinx/Ryujinx-Games-List/issues/new"
     );
   };
@@ -147,9 +147,9 @@ const GameDetailComponent = () => {
     return null;
   }
 
-  const hasMods = Enumerable.from(mods).any(mod => mod.name.includes(metaData.titleId.toUpperCase()));
-  const hasSaves = Enumerable.from(saves).any(save => save.name.includes(metaData.titleId.toUpperCase()));
-  const ryusakShadersCount = ryujinxShaders[metaData.titleId.toUpperCase()] || 0;
+  const hasMods = Enumerable.from(mods).any(mod => mod.name.includes(metaData.id));
+  const hasSaves = Enumerable.from(saves).any(save => save.name.includes(metaData.id));
+  const ryusakShadersCount = ryujinxShaders[metaData.id] || 0;
 
   return (
     <Box p={3}>
@@ -157,13 +157,13 @@ const GameDetailComponent = () => {
         <Button onClick={() => navigate(-1)} size="small" variant="outlined"><ArrowBackIcon /></Button>
         {
           metaData && (
-            <h3 style={{ marginLeft: 12 }}>{metaData.title} <code>{metaData.titleId}</code></h3>
+            <h3 style={{ marginLeft: 12 }}>{metaData.name} <code>{metaData.id}</code></h3>
           )
         }
         <Button
           variant="contained"
           color="error"
-          onClick={() => deleteGameAction(metaData.titleId.toUpperCase(), dataPath)}
+          onClick={() => deleteGameAction(metaData.id, dataPath)}
           startIcon={<DeleteIcon />}
         >
           {t("deleteGame")}
@@ -186,7 +186,7 @@ const GameDetailComponent = () => {
           <img
             referrerPolicy="no-referrer"
             style={{ border: "5px solid #222" }}
-            width="100%" src={metaData?.img || defaultIcon}
+            width="100%" src={metaData?.iconUrl || defaultIcon}
             alt=""
           />
         </Grid>
@@ -214,7 +214,7 @@ const GameDetailComponent = () => {
               variant="contained"
               fullWidth
               disabled={!hasMods}
-              onClick={() => setCurrentModAction(metaData.titleId, dataPath)}
+              onClick={() => setCurrentModAction(metaData.id, dataPath)}
             >
               {t(hasMods ? "dlMods" : "noMods")}
             </Button>
@@ -224,7 +224,7 @@ const GameDetailComponent = () => {
               variant="contained"
               fullWidth
               disabled={!hasSaves}
-              onClick={() => setCurrentSaveDownloadAction(metaData.titleId.toUpperCase())}
+              onClick={() => setCurrentSaveDownloadAction(metaData.id)}
             >
               {t(hasSaves ? "dlSave": "noSave")}
             </Button>
@@ -270,7 +270,7 @@ const GameDetailComponent = () => {
                     variant="contained"
                     fullWidth
                     disabled={threshold == -1 ? true : ((ryusakShadersCount + threshold) >= localShadersCount)}
-                    onClick={() => shareShaders(metaData.titleId, dataPath, localShadersCount, ryusakShadersCount)}
+                    onClick={() => shareShaders(metaData.id, dataPath, localShadersCount, ryusakShadersCount)}
                   >
                     {threshold == -1 ? "Shader uploading is currently unavailable" : t("shareShaders")}
                   </Button>
@@ -293,7 +293,7 @@ const GameDetailComponent = () => {
                     variant="contained"
                     fullWidth
                     disabled={ryusakShadersCount === 0}
-                    onClick={() => downloadShadersAction(metaData.titleId, dataPath)}
+                    onClick={() => downloadShadersAction(metaData.id, dataPath)}
                   >
                     {t("dlShaders")}
                   </Button>
@@ -309,7 +309,7 @@ const GameDetailComponent = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <GameBananaModsComponent title={metaData?.title} />
+          <GameBananaModsComponent title={metaData?.name} />
         </Grid>
       </Grid>
     </Box>

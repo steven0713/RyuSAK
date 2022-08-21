@@ -1,5 +1,5 @@
 import HttpService from "../services/HttpService";
-import { buildMetadataForTitleId } from "./emulatorFilesystem";
+import EShopMetaService from "../services/EShopMetaService";
 import { GithubIssue } from "../../types";
 
 export type ryujinxCompatibilityProps = [string];
@@ -22,8 +22,8 @@ const ryujinxCompatibility = async (...args: ryujinxCompatibilityProps) => {
 
   // In case there is no compatibility found, try a search by name instead titleId
   if (compatData.items.length === 0) {
-    const metadata = await buildMetadataForTitleId(titleId);
-    compatData = <GithubIssue> (await HttpService.getRyujinxCompatibility(metadata.title).catch(() => null));
+    const metadata = await EShopMetaService.getEShopMeta(titleId);
+    compatData = <GithubIssue> (await HttpService.getRyujinxCompatibility(metadata.name).catch(() => null));
     if (compatData.items.length > 0) {
       compatData.mode = "name";
     }

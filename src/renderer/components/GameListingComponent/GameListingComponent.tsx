@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import "./gameListing.css";
-import { RyujinxConfigMeta } from "../../../types";
+import { RyujinxConfigMeta, EShopTitleMeta } from "../../../types";
 import useStore from "../../actions/state";
 import { Box, Button, Divider, Grid, TextField, Tooltip } from "@mui/material";
 import jackSober from "../../resources/jack_sober.png";
@@ -45,7 +45,7 @@ const GameListingComponent = ({ config }: IConfigContainer) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [openAlertAction] = useStore(s => [s.openAlertAction]);
-  const [games, setGames] = useState<{ title: string, img: string, titleId: string }[]>([]);
+  const [games, setGames] = useState<EShopTitleMeta[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [filteredGames, setFilteredGames] = useState<typeof games>([]);
@@ -54,8 +54,8 @@ const GameListingComponent = ({ config }: IConfigContainer) => {
   // 2. Build metadata from eshop with titleId as argument
   const createLibrary = async () => {
     const titleIds = await invokeIpc("scan-games", config.path);
-    const gamesCollection: { title: string, img: string, titleId: string }[]  = await Promise.all(titleIds.map(async (i: string) => invokeIpc("build-metadata-from-titleId", i)));
-    setGames(gamesCollection.filter(i => i.title !== "0000000000000000")); // Homebrew app
+    const gamesCollection: EShopTitleMeta[] = await Promise.all(titleIds.map(async (i: string) => invokeIpc("build-metadata-from-titleId", i)));
+    setGames(gamesCollection.filter(i => i.id !== "0000000000000000")); // Homebrew app
   };
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const GameListingComponent = ({ config }: IConfigContainer) => {
 
   useEffect(() => {
     setFilteredGames(searchTerm.length > 0
-      ? games.filter(item => searchTerm.length > 0 ? item.title.toLowerCase().includes(searchTerm.toLowerCase()) : true)
+      ? games.filter(item => searchTerm.length > 0 ? item.name.toLowerCase().includes(searchTerm.toLowerCase()) : true)
       : games);
     setIsLoaded(true);
   }, [games, searchTerm]);
@@ -106,13 +106,13 @@ const GameListingComponent = ({ config }: IConfigContainer) => {
       <Grid container spacing={2} pr={4}>
         {
           filteredGames
-            .sort((a, b) => a.title.localeCompare(b.title))
+            .sort((a, b) => a.name.localeCompare(b.name))
             .map((item, index) => (
-              <Grid tabIndex={index} className="game" item xs={2} onClick={() => onGameDetailClick(item.titleId)} style={{ cursor: "pointer" }} key={index}>
-                <Tooltip arrow placement="top" title={item.title}>
+              <Grid tabIndex={index} className="game" item xs={2} onClick={() => onGameDetailClick(item.id)} style={{ cursor: "pointer" }} key={index}>
+                <Tooltip arrow placement="top" title={item.name}>
                   <div>
-                    <Label>{item.title}</Label>
-                    <Cover style={{ backgroundImage: `url(${item.img.length > 0 ? item.img : defaultIcon})` }} />
+                    <Label>{item.name}</Label>
+                    <Cover style={{ backgroundImage: `url(${item.iconUrl.length > 0 ? item.iconUrl : defaultIcon})` }} />
                   </div>
                 </Tooltip>
               </Grid>

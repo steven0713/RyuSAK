@@ -32,12 +32,6 @@ jobs:
       - name: Install dependencies
         run:  npm clean-install --include=dev
 
-      - name: Dump title IDs from Tinfoil DB
-        run:  npm run tinfoil
-
-      - name: Dump eShop data
-        run:  npm run eshop
-
       - name: Build
         run:  npm run build
 
