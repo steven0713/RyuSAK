@@ -41,7 +41,7 @@ const installFirmware = async (dataPath: string, fwVersion: string, mainWindow: 
 
     return extractPath;
   } catch (_err) {
-    console.log(_err);
+    console.error(_err);
     return { error: true, code: "FETCH_FAILED" };
   }
 };

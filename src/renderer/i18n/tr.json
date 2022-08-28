@@ -8,7 +8,6 @@
   "deleteGame": "Oyunu sil",
   "areYouSure": "Emin misiniz ?",
   "deleteGameNotice": "Bu seçenek bu oyunun shader cache, CPU cache ve mod klasörlerini silecektir. Bu eylem geri alınamaz!",
-  "customDns": "Yerel DNS çözümleyicisi yerine özel DNS çözümleyicisi kullan (CloudFlare). Özel DNS kullanımı Ryusak'ın ağ durumunda sorun olmamasına rağmen yaşanan sonsuz yükleme sorununu çözebilir.",
   "shadersCheck": "Sonra Ryusak'ın her şeyin herkes için sorunsuz çalıştığını kontrol edebilmesi için oyununuzu Ryujinx'te açmanız gerek.",
   "shadersSharing": "Shader paylaşılıyor ...",
   "shadersShared": "Shaderlarınız paylaşıldı! Paylaşılan shaderları <code>#ryu-shaders</code> kanalında bulabilirsiniz. Shaderlar kontrol edilip onaylandıktan sonra herkese açık hale getirilecekler!",

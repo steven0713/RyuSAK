@@ -1,25 +1,26 @@
 import { URL } from "url";
-import fetch from "./fetchProxy";
+import fetch, { RequestInit } from "node-fetch";
 import pRetry from "p-retry";
 import { app, BrowserWindow, ipcMain } from "electron";
 import http from "http";
 import https from "https";
-import dns from "dns/promises";
+import httpsProxyAgent from "https-proxy-agent";
 import fs from "fs-extra";
-import { hasDnsFile } from "../../index";
+import path from "path";
 import { MirrorDirMeta } from "../../types";
 import Enumerable from "linq";
 
+const USER_AGENT: string = `RyuSAK/${app.getVersion()}`;
 const CDN_URL: string = "https://mirror.lewd.wtf";
 
 export enum HTTP_PATHS {
-  FIRMWARE_LIST     = "/archive/nintendo/switch/firmware/?format=json",
+  FIRMWARE_LIST     = "/json/archive/nintendo/switch/firmware/",
   FIRMWARE_ZIP      = "/archive/nintendo/switch/firmware/Firmware {fw_version}.zip",
-  MODS_TITLE_LIST   = "/archive/nintendo/switch/mods/?format=json",
-  MODS_VERSION_LIST = "/archive/nintendo/switch/mods/{title_id}/?format=json",
-  MODS_LIST         = "/archive/nintendo/switch/mods/{title_id}/{version}/?format=json",
-  MOD_DOWNLOAD      = "/archive/nintendo/switch/mods/{title_id}/{version}/{name}/?format=json",
-  SAVES_LIST        = "/archive/nintendo/switch/savegames/?format=json",
+  MODS_TITLE_LIST   = "/json/archive/nintendo/switch/mods/",
+  MODS_VERSION_LIST = "/json/archive/nintendo/switch/mods/{title_id}/",
+  MODS_LIST         = "/json/archive/nintendo/switch/mods/{title_id}/{version}/",
+  MOD_DOWNLOAD      = "/json/archive/nintendo/switch/mods/{title_id}/{version}/{name}/",
+  SAVES_LIST        = "/json/archive/nintendo/switch/savegames/",
   SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
   SHADER_ZIP        = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
   SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
@@ -27,40 +28,64 @@ export enum HTTP_PATHS {
 }
 
 export enum OTHER_URLS {
-  RELEASE_INFO = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
-  COMPAT_LIST  = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
-  ESHOP_DATA   = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
-  GAME_BANANA  = "https://gamebanana.com/apiv7/Util/Game/NameMatch?_sName={query}&_nPerpage=10&_nPage=1",
-  KEYS         = "http://emusak.coveforme.com/firmware/prod.keys",
+  RELEASE_INFO       = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
+  COMPAT_LIST        = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
+  ESHOP_DATA         = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
+  GAME_BANANA_SEARCH = "https://gamebanana.com/apiv7/Util/Game/NameMatch?_sName={query}&_nPerpage=10&_nPage=1",
+  GAME_BANANA_PAGE   = "https://gamebanana.com/mods/games/{id}?mid=SubmissionsList&vl[preset]=most_dld&vl%5Border%5D=downloads",
+  KEYS               = "http://emusak.coveforme.com/firmware/prod.keys",
 }
 
-dns.setServers([
-  "1.1.1.1",
-  "[2606:4700:4700::1111]",
-]);
+class HttpService {
+  private httpAgent: http.Agent;
+  private httpsAgent: https.Agent;
 
-const staticLookup = async (hostname: string, _: null, cb: Function) => {
-  const ips = await dns.resolve(hostname);
+  constructor() {
+    const cacheDir = fs.existsSync(path.resolve(app.getPath("exe"), "..", "portable"))
+      ? path.resolve(app.getPath("exe"), "..", "electron_cache")
+      : path.join(app.getPath("userData"));
 
-  if (ips.length === 0) {
-    console.error(`Cannot resolve ${hostname}`);
+    const proxyFile = path.resolve(cacheDir, "proxy");
+    const proxy: string = fs.existsSync(proxyFile)
+      ? fs.readFileSync(proxyFile, "utf-8")
+      : null;
+
+    this.updateHttpAgents(proxy);
   }
 
-  cb(null, ips[0], 4);
-};
+  public updateHttpAgents(proxy: string) {
+    let oldhttpAgent = this.httpAgent;
+    let oldhttpsAgent = this.httpsAgent;
 
-const agentOpts: http.AgentOptions = { lookup: hasDnsFile ? staticLookup : undefined };
-const httpAgent: http.Agent = new http.Agent(agentOpts);
-const httpsAgent: https.Agent = new https.Agent(agentOpts);
+    if (proxy) {
+      this.httpsAgent = this.httpAgent = httpsProxyAgent(proxy);
+    } else {
+      this.httpAgent = new http.Agent();
+      this.httpsAgent = new https.Agent();
+    }
 
-class HttpService {
+    oldhttpAgent?.destroy();
+    oldhttpsAgent?.destroy();
+  }
+
+  protected fetch(url: string, req: RequestInit = { }) {
+    req.headers = {
+      ...req.headers,
+      "User-Agent": USER_AGENT
+    };
+
+    return fetch(url, req);
+  }
+
   // Trigger HTTP request using an exponential backoff strategy
-  protected _fetch(path: string, contentType: "JSON" | "TXT" | "BUFFER" = "JSON", retries = 3) {
+  protected get(path: string, contentType: "JSON" | "TXT" | "BUFFER" = "JSON", retries = 3) {
     const url = new URL(path, CDN_URL);
     return pRetry(
       async () => {
-        const response = await fetch(url.href, {
-          agent: url.href.includes("https:") ? httpsAgent : httpAgent
+        const response = await this.fetch(url.href, {
+          agent: url.protocol == "https:"
+            ? this.httpsAgent
+            : this.httpAgent
         });
 
         if (response.status >= 400) {
@@ -86,9 +111,9 @@ class HttpService {
     const fileStream = fs.createWriteStream(destPath);
     const controller = new AbortController();
 
-    const response = await fetch(url.href, {
+    const response = await this.fetch(url.href, {
       signal: controller.signal,
-      agent: url.href.includes("https:") ? httpsAgent : httpAgent
+      agent: this.httpsAgent
     });
 
     let chunkLength = 0;
@@ -124,31 +149,32 @@ class HttpService {
   }
 
   public async downloadRyujinxShaderList() {
-    return this._fetch(HTTP_PATHS.SHADERS_LIST);
+    return this.get(HTTP_PATHS.SHADERS_LIST);
   }
 
   public async downloadSaveList() {
-    return this._fetch(HTTP_PATHS.SAVES_LIST);
+    return this.get(HTTP_PATHS.SAVES_LIST);
   }
 
   public async downloadModsTitleList() {
-    return this._fetch(HTTP_PATHS.MODS_TITLE_LIST);
+    return this.get(HTTP_PATHS.MODS_TITLE_LIST);
   }
 
   public async getThreshold() {
-    return this._fetch(HTTP_PATHS.THRESHOLD, "TXT").catch(() => -1);
+    return this.get(HTTP_PATHS.THRESHOLD, "TXT").catch(() => -1);
   }
 
   public async getFirmwareVersion() {
-    const firmwareJson = await this._fetch(HTTP_PATHS.FIRMWARE_LIST) as MirrorDirMeta;
+    const firmwareJson = await this.get(HTTP_PATHS.FIRMWARE_LIST) as MirrorDirMeta;
     const fileName = Enumerable.from(firmwareJson).where(entry => entry.type == "file").last().name;
 
     return fileName.substring(9, fileName.length - 11);
   }
 
   public async getLatestApplicationVersion() {
-    const response = await fetch(OTHER_URLS.RELEASE_INFO, {
-      agent: httpsAgent
+    // Do not use this.get because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
+    const response = await this.fetch(OTHER_URLS.RELEASE_INFO, {
+      agent: this.httpsAgent
     });
 
     if (response.status != 200) {
@@ -162,26 +188,26 @@ class HttpService {
   }
 
   public async downloadKeys() {
-    return this._fetch(OTHER_URLS.KEYS, "TXT");
+    return this.get(OTHER_URLS.KEYS, "TXT");
   }
 
   public async downloadEshopData() {
-    return this._fetch(OTHER_URLS.ESHOP_DATA, "TXT");
+    return this.get(OTHER_URLS.ESHOP_DATA, "TXT");
   }
 
   public async getRyujinxCompatibility(query: string) {
-    // Do not use this._fetch because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
-    return fetch(OTHER_URLS.COMPAT_LIST.replace("{query}", query), {
-      agent: httpsAgent
+    // Do not use this.get because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
+    return this.fetch(OTHER_URLS.COMPAT_LIST.replace("{query}", query), {
+      agent: this.httpsAgent
     }).then(r => r.json());
   }
 
   public async getModVersions(titleId: string) {
-    return this._fetch(HTTP_PATHS.MODS_VERSION_LIST.replace("{title_id}", titleId));
+    return this.get(HTTP_PATHS.MODS_VERSION_LIST.replace("{title_id}", titleId));
   }
 
   public async getModsForVersion(titleId: string, version: string) {
-    return this._fetch(HTTP_PATHS.MODS_LIST.replace("{title_id}", titleId).replace("{version}", version));
+    return this.get(HTTP_PATHS.MODS_LIST.replace("{title_id}", titleId).replace("{version}", version));
   }
 
   public async getModName(titleId: string, version: string, name: string): Promise<{ modName: string, url: string }> {
@@ -190,7 +216,7 @@ class HttpService {
                            .replace("{version}", encodeURIComponent(version))
                            .replace("{name}", encodeURIComponent(name));
 
-    const mod = (await this._fetch(path)) as MirrorDirMeta;
+    const mod = (await this.get(path)) as MirrorDirMeta;
 
     if (!mod[0]) {
       return;
@@ -205,11 +231,15 @@ class HttpService {
   }
 
   public async downloadSave(fileName: string) {
-    return this._fetch(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER");
+    return this.get(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER");
   }
 
   public async searchGameBana(query: string) {
-    return this._fetch(OTHER_URLS.GAME_BANANA.replace("{query}", query));
+    return this.get(OTHER_URLS.GAME_BANANA_SEARCH.replace("{query}", query));
+  }
+
+  public async getGameBananaPage(id: number) {
+    return this.get(OTHER_URLS.GAME_BANANA_PAGE.replace("{id}", id.toString()), "TXT");
   }
 }
 

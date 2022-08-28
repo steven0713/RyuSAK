@@ -1,5 +1,4 @@
 import HttpService from "../services/HttpService";
-import fetch from "../services/fetchProxy";
 import cheerio from "cheerio";
 import { GameBananaMod } from "../../types";
 
@@ -7,14 +6,13 @@ export type searchProps = [string];
 
 export const searchGameBana = async (...args: searchProps): Promise<GameBananaMod[]> => {
   const [name] = args;
-  const res = await HttpService.searchGameBana(name) as unknown as { _idRow: number }[];
+  const response = await HttpService.searchGameBana(name) as { _idRow: number }[];
 
-  if (res.length === 0) {
+  if (response.length === 0) {
     return;
   }
 
-  const url = `https://gamebanana.com/mods/games/${res[0]._idRow}?mid=SubmissionsList&vl[preset]=most_dld&vl%5Border%5D=downloads`;
-  const modPageContent = await fetch(url).then(r => r.text()).catch(() => null);
+  const modPageContent = await HttpService.getGameBananaPage(response[0]._idRow);
 
   if (!modPageContent) {
     return [];
@@ -26,7 +24,7 @@ export const searchGameBana = async (...args: searchProps): Promise<GameBananaMo
 
   const mods = modsIdentifiers.map((i, element) => {
     if (!modsPreviews[i]) return {};
-    const modElement = $(element).find("a[class='Name']");
+    const modElement: any = $(element).find("a[class='Name']");
     return {
       name: modElement.text().trim(),
       url: modElement.attr("href"),

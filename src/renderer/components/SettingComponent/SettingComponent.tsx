@@ -13,17 +13,20 @@ import {
   FormControl
 } from "@mui/material";
 import useTranslation from "../../i18n/I18nService";
-import { invokeIpc } from "../../utils";
 import useStore from "../../actions/state";
 import { LS_KEYS } from "../../../types";
-import { LANGUAGES, i18n } from "../../app";
+import { LANGUAGES } from "../../app";
 
 const SettingComponent = () => {
   const { t } = useTranslation();
   const [
-    settings
+    settings,
+    setProxyAction,
+    setLocaleAction
   ] = useStore(state => [
-    state.settings
+    state.settings,
+    state.setProxyAction,
+    state.setLocaleAction
   ]);
 
   const [open, setOpen] = useState(false);
@@ -34,14 +37,8 @@ const SettingComponent = () => {
     setOpen(false);
 
   const handleSave = async () => {
-    await invokeIpc("set-proxy", proxy);
-
-    if (localStorage.getItem(LS_KEYS.LOCALE) != locale) {
-      localStorage.setItem(LS_KEYS.LOCALE, locale);
-      await i18n.changeLanguage(locale);
-
-      window.location.reload();
-    }
+    await setProxyAction(proxy);
+    await setLocaleAction(locale);
 
     setOpen(false);
   };

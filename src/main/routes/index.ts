@@ -21,8 +21,6 @@ import {
   getModsVersionsProps
 } from "./modsDownload";
 import { countShaders, countShadersProps, installShaders, installShadersProps, shareShaders } from "./shaders";
-import { toggleCustomDnsResolver } from "./dns.ipc";
-import { hasDnsFile } from "../../index";
 import { searchGameBana, searchProps } from "./gamebanana";
 import { setProxy } from "./settings.ipc";
 import * as path from "path";
@@ -44,8 +42,6 @@ export type IPCCalls = {
   "count-shaders": ReturnType<typeof countShaders>,
   "install-shaders": ReturnType<typeof installShaders>,
   "share-shaders": ReturnType<typeof shareShaders>,
-  "toggle-custom-dns": ReturnType<typeof toggleCustomDnsResolver>,
-  "has-dns-file": Promise<boolean>,
   "search-gamebanana": ReturnType<typeof searchGameBana>,
   "delete-game": ReturnType<typeof deleteGame>,
   "set-proxy": ReturnType<typeof setProxy>,
@@ -69,8 +65,6 @@ const makeIpcRoutes = (mainWindow: BrowserWindow) => {
   ipcMain.handle("count-shaders", async (_, ...args: countShadersProps) => countShaders(...args));
   ipcMain.handle("install-shaders", async (_, ...args: installShadersProps) => installShaders(mainWindow, ...args));
   ipcMain.handle("share-shaders", async (_, ...args: shareShaders) => shareShaders(mainWindow, ...args));
-  ipcMain.handle("toggle-custom-dns", async () => toggleCustomDnsResolver());
-  ipcMain.handle("has-dns-file", async () => hasDnsFile);
   ipcMain.handle("search-gamebanana", async (_, ...args: searchProps) => searchGameBana(...args));
   ipcMain.handle("delete-game", (_, ...args: deleteGameProps) => deleteGame(...args));
   ipcMain.handle("set-proxy", async (_, proxy: string) => setProxy(proxy));

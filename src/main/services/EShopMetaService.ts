@@ -43,16 +43,10 @@ class EShopMetaService {
   }
 
   async getEShopMeta(titleId: string): Promise<EShopTitleMeta> {
+    const eShopTitles = await this.getEShopTitles();
     titleId = titleId.toUpperCase();
 
-    const customMeta = customMetas[titleId];
-    if (customMeta) {
-      return customMeta;
-    }
-
-    const eShopTitles = await this.getEShopTitles();
-
-    let titleMeta = eShopTitles[titleId] || { id: titleId, name: titleId, iconUrl: "" };
+    let titleMeta = customMetas[titleId] || eShopTitles[titleId] || { id: titleId, name: titleId, iconUrl: "" };
     titleMeta.name ??= titleId;
     titleMeta.iconUrl ??= "";
 
@@ -68,7 +62,7 @@ class EShopMetaService {
 
       return true;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return false;
     }
   };

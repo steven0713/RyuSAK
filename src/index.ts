@@ -12,8 +12,6 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 
 export const hasPortableFile = fs.existsSync(path.resolve(app.getPath("exe"), "..", "portable"));
 export const cacheDir = hasPortableFile ? path.resolve(app.getPath("exe"), "..", "electron_cache") : path.join(app.getPath("userData"));
-export const dnsFile = path.resolve(cacheDir, "dns");
-export const hasDnsFile = fs.pathExistsSync(dnsFile);
 export const proxyFile = path.resolve(cacheDir, "proxy");
 export const SYS_SETTINGS = {
   proxy: readFile(proxyFile),

@@ -8,7 +8,6 @@
   "deleteGame": "删除游戏",
   "areYouSure": "你确定吗？",
   "deleteGameNotice": "此选项将删除此游戏的着色器缓存、CPU 缓存和模组文件夹。此操作无法撤消。",
-  "customDns": "使用自定义 DNS 解析器 (CloudFlare) 而不是系统提供的解析器。这可能会解决即使 RyuSAK 状态为 up 时也会出现的无限加载问题。",
   "shadersCheck": "那么你必须用 Ryujinx 运行你的游戏，这样 RyuSAK 才能检查每个人的一切是否按预期工作。如果你一直在使用 vulkan PR，请不要尝试共享着色器，因为它不会工作到现在...",
   "shadersSharing": "共享着色器...",
   "shadersShared": "您的着色器已提交！您可以在<code>#ryu-shaders</code>频道找到它们。一旦批准，它们将分享给大家下载！",

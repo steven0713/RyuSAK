@@ -9,6 +9,7 @@ import createGameSlice from "./game.action";
 import createDownloadSaveSlice from "./save.action";
 import createDownloadModSlice from "./mod.action";
 import createShadersSlice from "./shaders.action";
+import createSettingSlice from "./setting.action";
 
 const useStore = create((set: SetState<any>, get: GetState<any>) => ({
   ...createBootstrapSlice(set, get),
@@ -19,7 +20,8 @@ const useStore = create((set: SetState<any>, get: GetState<any>) => ({
   ...createGameSlice(set),
   ...createDownloadSaveSlice(set),
   ...createDownloadModSlice(set),
-  ...createShadersSlice(set)
+  ...createShadersSlice(set),
+  ...createSettingSlice(set)
 }));
 
 export default useStore;
