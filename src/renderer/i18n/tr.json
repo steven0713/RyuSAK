@@ -1,5 +1,4 @@
 {
-  "SHADER_CACHE_V1": "RyuSAK, Ryujinx V1 shader cache kullandığınızı tespit etti. Ryujinx geliştiricileri bu shader cache'in birçok yenilik içeren yeni bir sürümünü geliştirdiler. Shader paylaşmadan önce, oyunu Ryujinx'te açın, Ryujinx eski cache'i yeni cache'e dönüştürecektir. Bu işlemden sonra RyuSAK'ı tekrar açıp paylaşabilirsiniz.",
   "continue": "Devam et",
   "cancel": "İptal",
   "save": "Save",
@@ -8,9 +7,8 @@
   "deleteGame": "Oyunu sil",
   "areYouSure": "Emin misiniz ?",
   "deleteGameNotice": "Bu seçenek bu oyunun shader cache, CPU cache ve mod klasörlerini silecektir. Bu eylem geri alınamaz!",
-  "shadersCheck": "Sonra Ryusak'ın her şeyin herkes için sorunsuz çalıştığını kontrol edebilmesi için oyununuzu Ryujinx'te açmanız gerek.",
   "shadersSharing": "Shader paylaşılıyor ...",
-  "shadersShared": "Shaderlarınız paylaşıldı! Paylaşılan shaderları <code>#ryu-shaders</code> kanalında bulabilirsiniz. Shaderlar kontrol edilip onaylandıktan sonra herkese açık hale getirilecekler!",
+  "shadersShared": "Shaderlarınız paylaşıldı!",
   "gamebananaModsTitle": "Gamebanana modları (Gamebanana'da en çok indirilen 20 ye kadar mod)",
   "gamebananaNoMods": "Gamebanana'da mod bulunmuyor",
   "gameBananaLoading": "Gamebanana'dan modlar yükleniyor ...",
@@ -50,7 +48,7 @@
   "refreshInfo": "Yenileme başarılı! Oyununuzun gözükmesi için en az bir kere açmış olmanız gerektiğini unutmayın",
   "modInstalled": "Mod belirtilen dizine başarıyla yüklendi : <code>{path}</code>",
   "shaderInfo": "Shaderlar; arazi, karakterler, patlamalar ve çimen gibi grafiklerin oluşturulmasından sorumlu, grafik işlemci biriminde çalışan küçük programlardır. Bilgisayar shaderları doğrudan anlayıp işleyemediği için önce işleyebileceği bir biçime çevirmesi gerekmektedir. Bu çeviri süreci zaman alır. Bunu iki şekilde görebilirsiniz:<br /><br />- Yeni görülen shaderlar emülasyonun çeviri işlemini bitene kadar duraksamasına sebep olur, bu da kullanıcıya duraksamalar ve fps düşmesi şeklinde gözükür. Bir oyunu ilk defa açtığınızda birçok çeviri işlemi gerçekleşecektir. Oynadıkça bu yavaşlamalar azalacaktır.<br /><br />- Emülator oyunun kullandığı shaderları işledikten sonra kaydedecektir (belleğe alacaktır). Oyunu tekrar açtığınızda emülatör önceki duraksamaların yaşanmaması için belleklenen shaderları yükleyeceğinden oyun daha yavaş açılacaktır.",
-  "shaderThreshold": "Bu sayı shader paylaşma alt limitidir. Yerel shader sayınız RyuSAK'taki shader sayısından bu sayı kadar fazla ise shaderlarınızı paylaşabilirsiniz. Bu sayı paylaşan kişi sayısına ve meşguliyet durumumuza bağlıdır. Paylaşılan shaderları gözden geçirmemiz çok zaman aldığı için alt limitin altındaki eklemeler gözden geçirmemize değmez. Aşırı yüklenmeyi engellemek için şimdilik kişi başına saat başı 3 tane shader paylaşımı yapılabilir.",
+  "shaderThreshold": "Bu sayı shader paylaşma alt limitidir. Yerel shader sayınız RyuSAK'taki shader sayısından bu sayı kadar fazla ise shaderlarınızı paylaşabilirsiniz.",
   "localShadersCount": "Yerel shader sayısı",
   "ryusakShadersCount": "RyuSAK shader sayısı",
   "dlShaders": "Shader indir",
@@ -59,7 +57,6 @@
   "threshold": "Alt sınır",
   "refresh": "Yenile",
   "OPERATION_CANCELED": "İşlemi iptal ettiniz.",
-  "INVALID_RYUJINX_BINARY": "Seçtiğiniz Ryujinx binary dosyası geçerli değil.",
   "EMULATOR_PATH_ALREADY_EXISTS": "Bu dizini RyuSAK'a zaten eklediniz.",
   "FETCH_FAILED": "Kaynağa erişilemedi, lütfen tekrar deneyin."
 }

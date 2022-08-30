@@ -1,5 +1,4 @@
 {
-  "SHADER_CACHE_V1": "RyuSAK 检测到您正在使用 Ryujinx 的 V1 着色器缓存。模拟器开发人员创建了此着色器缓存的新版本，并进行了大量改进。在共享着色器之前，在 Ryujinx 中启动游戏，模拟器会将旧缓存转换为新的自动然后重新打开 RyuSAK。",
   "continue": "继续",
   "cancel": "取消",
   "save": "保存",
@@ -8,9 +7,8 @@
   "deleteGame": "删除游戏",
   "areYouSure": "你确定吗？",
   "deleteGameNotice": "此选项将删除此游戏的着色器缓存、CPU 缓存和模组文件夹。此操作无法撤消。",
-  "shadersCheck": "那么你必须用 Ryujinx 运行你的游戏，这样 RyuSAK 才能检查每个人的一切是否按预期工作。如果你一直在使用 vulkan PR，请不要尝试共享着色器，因为它不会工作到现在...",
   "shadersSharing": "共享着色器...",
-  "shadersShared": "您的着色器已提交！您可以在<code>#ryu-shaders</code>频道找到它们。一旦批准，它们将分享给大家下载！",
+  "shadersShared": "您的着色器已提交！",
   "gamebananaModsTitle": "Gamebanana 模组（GameBanana 上最多 20 个下载次数最多的模组）",
   "gamebananaNoMods": "在 Gamebanana 上找不到任何模组",
   "gameBananaLoading": "正在从 Gamebanana 加载模组 ...",
@@ -49,7 +47,7 @@
   "refreshInfo": "刷新成功！请注意，只会显示您在模拟器中至少启动过一次的游戏。",
   "modInstalled": "Mod 成功安装在：<code>{path}</code>",
   "shaderInfo": "着色器是运行在显卡上的小程序，负责渲染地形、人物、爆炸、草等图形。由于 PC 不能直接执行 Switch 的着色器，它首先必须将它们转换为您的格式PC 可以理解。这个转换过程很耗时，你会从两个方面注意到它：<br /><br />- 遇到任何新的着色器都会导致模拟暂停，直到转换完成，这会导致卡顿和 FPS 下降。当您第一次加载游戏时，会发生很多转换。玩得越多，这种卡顿就会迅速减少。<br /><br />- 模拟器将保存游戏使用的任何着色器（AKA 它缓存他们）。当您启动游戏时，模拟器将需要一些时间来加载保存的着色器，以防止再次发生卡顿。",
-  "shaderThreshold": "如果您的本地 Shader 计数超过 RyuSAK 的计数至少这个值，您可以共享着色器。这是基于我们已经有多少提交和我们的工作量。审查提交非常耗时，不值得我们努力如果额外的着色器计数低于阈值。现在每个用户每小时的提交限制为 3 次，以防止服务器过载。",
+  "shaderThreshold": "如果您的本地 Shader 计数超过 RyuSAK 的计数至少这个值，您可以共享着色器。",
   "localShadersCount": "本地着色器计数",
   "ryusakShadersCount": "RyuSAK 着色器计数",
   "dlShaders": "下载着色器",
@@ -58,7 +56,6 @@
   "threshold": "阈值",
   "refresh": "刷新",
   "OPERATION_CANCELED": "你取消了操作。",
-  "INVALID_RYUJINX_BINARY": "这不是一个有效的 Ryujinx 二进制文件。",
   "EMULATOR_PATH_ALREADY_EXISTS": "您已经将此路径添加到 RyuSAK。",
   "FETCH_FAILED": "无法获取资源，请重试。"
 }

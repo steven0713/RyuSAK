@@ -33,7 +33,7 @@ export const downloadMod = async (mainWindow: BrowserWindow, ...args: downloadMo
 
   await fs.ensureDir(destPath);
   const modDestPath = path.resolve(destPath, name);
-  const result = await HttpService.fetchWithProgress(url, modDestPath, mainWindow, modName);
+  const result = await HttpService.getWithProgress(url, modDestPath, mainWindow, modName);
 
   if (!result) {
     return Promise.reject(new Error("Unable to retrieve file"));

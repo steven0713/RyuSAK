@@ -1,11 +1,12 @@
 import fs from "fs-extra";
 import path from "path";
 import zip from "adm-zip";
-import HttpService, { HTTP_PATHS } from "../services/HttpService";
-import { BrowserWindow, dialog } from "electron";
+import HttpService, { HTTP_PATHS, OTHER_URLS } from "../services/HttpService";
+import { BrowserWindow } from "electron";
 import EShopMetaService from "../services/EShopMetaService";
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import { Buffer } from "buffer";
+import { Buffer } from "buffer";;
+import FormData from "form-data";
+import { MirrorUploadResponse } from "../../types";
 
 export type countShadersProps = [string, string];
 
@@ -13,90 +14,15 @@ export type installShadersProps = [string, string];
 
 export type shareShaders = [string, string, number, number];
 
-export const asyncZipWrite = (archive: zip, path: string): Promise<void> => new Promise((resolve) => {
-  archive.writeZip(path, () => resolve());
+export const writeZipAsync = (archive: zip, path: string): Promise<Error> => new Promise((resolve) => {
+  archive.writeZip(path, (error) => resolve(error));
 });
-
-const updateConfig = (conf: any) => {
-  conf["logging_enable_error"] = true;
-  conf["logging_enable_guest"] = true;
-  conf["logging_enable_info"] = true;
-  conf["logging_enable_stub"] = true;
-  conf["logging_enable_warn"] = true;
-  conf["logging_enable_fs_access_log"] = true;
-  return conf;
-};
-
-const asyncReadRyujinxProcess = async (ryuBinPath: string): Promise<any> => new Promise((resolve, reject) => {
-  let child: ChildProcessWithoutNullStreams;
-  try {
-    child = spawn(ryuBinPath);
-  } catch(e) {
-    dialog.showMessageBox({
-      title: "Error",
-      message: "Cannot launch Ryujinx, please redo the same but launch RyuSAK as admin. Probably antivirus is preventing RyuSAK to launch Ryujinx.",
-      type: "error",
-      buttons: ["Ok"],
-    });
-    return Promise.reject("");
-  }
-  let fullData = "";
-  let ranTitleId: string;
-  let ranTitleVersion: string;
-
-  child.on("exit", () => resolve(false));
-  child.stdout.on("data", (data: string) => {
-    fullData += data;
-    const titleIdMatch = /for Title (.+)/gi.exec(fullData);
-    const titleVersionMatch = /v([\d+.]+) \[/.exec(fullData);
-
-    if (titleVersionMatch && titleVersionMatch.length >= 2) {
-      ranTitleVersion = titleVersionMatch[1];
-    }
-
-    if (titleIdMatch && titleIdMatch.length >= 2) {
-      ranTitleId = titleIdMatch[1].trim();
-    }
-
-    if (ranTitleId && fullData.toLowerCase().includes("cache loaded")) {
-      resolve({ ranTitleId, compiledShadersCount: 0, ranTitleVersion });
-      child.kill();
-    }
-  });
-  child.stdout.on("error", () => reject(false));
-});
-
-export const packShaders = async (dataPath: string, titleID: string): Promise<any> => {
-  const guestData = path.resolve(dataPath, "games", titleID.toLowerCase(), "cache", "shader", "guest.data");
-  const archive = new zip();
-  archive.addLocalFile(guestData);
-  archive.addLocalFile(path.resolve(dataPath, "games", titleID.toLowerCase(), "cache", "shader", "guest.toc"));
-  archive.addLocalFile(path.resolve(dataPath, "games", titleID.toLowerCase(), "cache", "shader", "shared.data"));
-  archive.addLocalFile(path.resolve(dataPath, "games", titleID.toLowerCase(), "cache", "shader", "shared.toc"));
-
-  const zipPath = path.resolve(guestData, "..", "upload.zip");
-  await asyncZipWrite(archive, zipPath);
-
-  return zipPath;
-};
 
 export const countShaders = async (...args: countShadersProps): Promise<number> => {
   const [titleId, dataPath] = args;
   const shaderTocFile = path.resolve(dataPath, "games", titleId.toLocaleLowerCase(), "cache", "shader", "shared.toc");
-  const shaderExists = await fs.pathExists(shaderTocFile);
-  const shaderZipPath = path.resolve(dataPath, "games", titleId.toLocaleLowerCase(), "cache", "shader", "guest", "program", "cache.zip");
-  const shaderZipExists = await fs.pathExists(shaderZipPath);
 
-  if (!shaderExists) {
-    if (shaderZipExists) {
-      try {
-        const archive = new zip(shaderZipPath);
-        return archive.getEntries().length;
-      } catch(e) {
-        return 0;
-      }
-    }
-
+  if (!await fs.pathExists(shaderTocFile)) {
     return 0;
   }
 
@@ -104,16 +30,17 @@ export const countShaders = async (...args: countShadersProps): Promise<number> 
   const fd = await fs.open(shaderTocFile, "r+");
   const buffer = Buffer.alloc(8);
   await fs.read(fd, buffer, 0, 8, 4);
-  const cacheVersion = buffer.readBigUInt64LE();
+  const cacheVersion = buffer.readUInt32LE();
   await fs.close(fd);
 
-  if (cacheVersion < 65537) {
+  // ((1 << 16) | 2) aka v1.2
+  if (cacheVersion < 65538) {
     return 0;
   }
 
   // If cache version is accepted by Ryujinx, computer shader count
   const stat = await fs.stat(shaderTocFile);
-  return Math.max(+((stat.size - 32) / 8), 0);
+  return Math.max((stat.size - 32) / 8, 0);
 };
 
 export const installShaders = async (mainWindow: BrowserWindow, ...args: installShadersProps): Promise<boolean> => {
@@ -123,8 +50,8 @@ export const installShaders = async (mainWindow: BrowserWindow, ...args: install
   await fs.ensureDir(shaderCacheDir);
   await fs.emptyDir(shaderCacheDir);
 
-  const shaderCacheZipPath = path.resolve(shaderCacheDir, "cache.zip");
-  const result = await HttpService.fetchWithProgress(HTTP_PATHS.SHADER_ZIP.replace("{title_id}", titleId), shaderCacheZipPath, mainWindow, titleId);
+  const shaderCacheZipPath = path.resolve(shaderCacheDir, `${titleId}.zip`);
+  const result = await HttpService.getWithProgress(HTTP_PATHS.SHADERS_ZIP.replace("{title_id}", titleId), shaderCacheZipPath, mainWindow, titleId);
 
   if (!result) {
     return null;
@@ -138,69 +65,94 @@ export const installShaders = async (mainWindow: BrowserWindow, ...args: install
 };
 
 export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShaders) => {
-  throw new Error("Not implemented"); // @ts-ignore
-
   const [titleId, dataPath, localCount, ryusakCount] = args;
-
-  const guestTocFile = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader", "guest.toc");
-
-  if (!await fs.pathExists(guestTocFile)) {
-    return { error: true, code: "SHADER_CACHE_V1" };
-  }
-
-  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, { properties: ["openFile"] });
-
-  if (canceled) {
-    return { error: true, code: "OPERATION_CANCELED" };
-  }
-
-  const ryuBinary = filePaths[0];
-
-  if (!ryuBinary.toLowerCase().includes("ryujinx")) {
-    return { error: true, code: "INVALID_RYUJINX_BINARY" };
-  }
-
-  const ldnConfigPath = path.resolve(dataPath, "LDNConfig.json");
-  const hasLdnConfigFile = await fs.promises.access(ldnConfigPath).then(() => true).catch(() => false);
-  const standardConfigPath = path.resolve(dataPath, "Config.json");
-
-  let ryujinxConfig = JSON.parse((await fs.promises.readFile(standardConfigPath)).toString());
-  ryujinxConfig = updateConfig(ryujinxConfig);
-  await fs.promises.writeFile(hasLdnConfigFile ? ldnConfigPath : standardConfigPath, JSON.stringify(ryujinxConfig, null, 2), "utf-8");
-
   const metadata = await EShopMetaService.getEShopMeta(titleId);
-  const result = await asyncReadRyujinxProcess(ryuBinary).catch(() => false);
+  const shaderCacheDir = path.resolve(dataPath, "games", titleId.toLowerCase(), "cache", "shader");
+  const shaderCacheZipPath = path.resolve(shaderCacheDir, `${titleId}.zip`);
 
-  if (!result) {
-    return;
-  }
+  const shaderCacheZip = new zip();
+  shaderCacheZip.addLocalFile(path.resolve(shaderCacheDir, "guest.data"));
+  shaderCacheZip.addLocalFile(path.resolve(shaderCacheDir, "guest.toc"));
+  shaderCacheZip.addLocalFile(path.resolve(shaderCacheDir, "shared.data"));
+  shaderCacheZip.addLocalFile(path.resolve(shaderCacheDir, "shared.toc"));
 
-  if (result.ranTitleId.toLowerCase() !== titleId.toLowerCase()) {
-    return { error: true, code: `You shared the wrong titleID, you had to run ${metadata.name || metadata.id} in Ryujinx` };
-  }
+  await writeZipAsync(shaderCacheZip, shaderCacheZipPath);
 
-  /**
-   if (result.compiledShadersCount !== localCount) {
-    return { error: true, code: `You have ${localCount} on your cache but Ryujinx compiled ${result.compiledShadersCount}. That means that some shaders are either corrupted or rejected. This probably isn't your fault, it probably means you build shaders a longer time ago and Ryujinx chose to reject them because they changed something in their code. The game probably run fine, but because we share shaders to everyone, we chose to reject your submission to avoid any conflict as we aren't 100% sure if this will cause issue to anyone.` };
-  }
-   */
-
-  const shadersPath = await packShaders(dataPath, titleId);
-  const size = fs.lstatSync(shadersPath).size;
+  const size = fs.lstatSync(shaderCacheZipPath).size;
   let bytes = 0;
   let lastEmittedEventTimestamp = 0;
-
-  // @ts-ignore
-  const readStream = fs.createReadStream(shadersPath).on("data", (chunk) => {
+  const readStream = fs.createReadStream(shaderCacheZipPath).on("data", (chunk) => {
     bytes += chunk.length;
-    const currentTimestamp = +new Date();
+    const currentTimestamp = new Date().getUTCMilliseconds();
     if (currentTimestamp - lastEmittedEventTimestamp >= 100) {
       const percentage = (bytes / size * 100).toFixed(2);
       mainWindow.webContents.send("download-progress", titleId, percentage);
-      lastEmittedEventTimestamp = +new Date();
+      lastEmittedEventTimestamp = new Date().getUTCMilliseconds();
     }
   });
 
-  // TODO: implement uploading shaders
-  return true;
+  const formData = new FormData();
+  formData.append("file", readStream);
+
+  const uploadRes = await HttpService.post(OTHER_URLS.SHADERS_UPLOAD, formData);
+  await fs.unlink(shaderCacheZipPath);
+
+  if (!uploadRes.ok) {
+    return { error: true, code: "SHADER_UPLOAD_FAIL", message: `${uploadRes.status} - ${uploadRes.statusText}` };
+  }
+
+  const uploadJson = await uploadRes.json() as MirrorUploadResponse;
+  const message = {
+    embeds: [
+      {
+        author: {
+          name: "RyuSAK",
+          url: "https://github.com/Ecks1337/RyuSAK",
+          icon_url: "https://raw.githubusercontent.com/Ecks1337/RyuSAK/master/src/assets/icon.ico"
+        },
+        color: 5055982,
+        fields: [
+          {
+            name: "Title Name",
+            value: metadata.name
+          },
+          {
+            name: "Title ID",
+            value: metadata.id
+          },
+          {
+            name: "Local Shader Count",
+            value: localCount
+          },
+          {
+            name: "RyuSAK Shader Count",
+            value: ryusakCount
+          },
+          {
+            name: "File ID",
+            value: uploadJson.fileId
+          },
+          {
+            name: "Deletion Token",
+            value: uploadJson.deletionToken
+          },
+          {
+            name: "Deletion Time",
+            value: uploadJson.deletionTime
+          }
+        ]
+      }
+    ]
+  };
+
+  const webhookRes = await HttpService.postJSON(OTHER_URLS.SHADERS_POST, message);
+  if (webhookRes.ok) {
+    return { error: false, code: null, message: null };
+  } else {
+    return {
+      error: true,
+      code: "SHADER_WEBHOOK_FAIL",
+      message: `<code>Title Name: ${metadata.name}</br>Title ID: ${metadata.id}</br>Local Shader Count: ${localCount}</br>RyuSAK Shader Count: ${ryusakCount}</br>File ID: ${uploadJson.fileId}</br>Deletion Token: ${uploadJson.deletionToken}</br>Deletion Time: ${uploadJson.deletionTime}</code>`
+    };
+  }
 };

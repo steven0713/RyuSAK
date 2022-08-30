@@ -4,9 +4,8 @@
   "deleteGame": "Cancella gioco",
   "areYouSure": "Sei sicuro/a ?",
   "deleteGameNotice": " Questa opzione cancellerà  la tua shader cache, cache della CPU e la cartella dei mods per questo gioco. Questa azione non potrà essere annulata.",
-  "shadersCheck": "Poi devi aprire il tuo gioco in Ryujinx per permettere a RyuSAK di verificare che tutto funzioni come si deve per tutti.",
   "shadersSharing": "Condividendo i Shaders ...",
-  "shadersShared": "I tuoi shaders sono stati caricati! Li puoi trovare nel <code>#ryu-shaders</code> canale. Una volta approvati saranno condivisi a tutti!",
+  "shadersShared": "I tuoi shaders sono stati caricati!",
   "gamebananaModsTitle": "Mods da Gamebanana (fino alle 20 mods piu scaricate su GameBanana)",
   "gamebananaNoMods": "Nessuna mod trovata su Gamebanana",
   "gameBananaLoading": "Caricando mods da Gamebanana ...",
@@ -44,7 +43,7 @@
   "refreshInfo": "Aggiornato con successo, nota che il tuo gioco sarà mostrato solo se lo hai avviato almeno una volta nell'emulatore",
   "modInstalled": "Mod installata con successo in : <code>{path}</code>",
   "shaderInfo": "Gli shader sono piccoli programmi in esecuzione su una scheda grafica che sono responsabili del rendering della grafica come terreno, personaggi, esplosioni, erba, ecc. Poiché un PC non può eseguire direttamente gli shader, deve prima tradurli in un formato che il PC possa capire. Questo processo di traduzione consuma molto tempo, infatti: <br /><br />- Qualsiasi nuovo shaders che si incontra causerà una pausa nell'emulazione fino a quando la traduzione non sarà terminata, che causa stuttering e cali di FPS. Quando si carica un gioco per la prima volta, accadrà un sacco di traduzione. Giocando di più questo stuttering diminuisce rapidamente. <br /><br />- L'emulatore salverà tutti gli shader utilizzati da un gioco (ovvero li memorizzerà nella cache). Quando si avvia un gioco, l'emulatore impiegherà un po' di tempo a caricare quegli shader salvati per evitare che lo stuttering si ripeta",
-  "shaderThreshold": "Ciò significa che potete condividere gli shader se il vostro numero di shader locali supera quello di RyuSAK di questo valore. Questo si basa su quanti invii abbiamo già e sul nostro carico di lavoro. Esaminare le vostre richieste richiede molto tempo e non vale il nostro sforzo se il conteggio è al di sotto della variabile di soglia. Le richieste sono limitate a 3 per utente all'ora",
+  "shaderThreshold": "Ciò significa che potete condividere gli shader se il vostro numero di shader locali supera quello di RyuSAK di questo valore.",
   "localShadersCount": "Quantità di shaders Locali",
   "ryusakShadersCount": "Quantità di shaders di RyuSAK",
   "dlShaders": "Scarica shaders",
@@ -52,8 +51,6 @@
   "threshold": "Soglia",
   "refresh": "Ricarica",
   "OPERATION_CANCELED": "Hai annulato questa operazione.",
-  "INVALID_RYUJINX_BINARY": "Questo non è un valido file binario di Ryujinx",
-  "INVALID_YUZU_BINARY": "Questo non è un valido file binario di Yuzu",
   "EMULATOR_PATH_ALREADY_EXISTS": "Hai già aggiunto questo percorso a RyuSAK.",
   "FETCH_FAILED": "Impossibile prendere la risorsa, per favore riprova."
 }

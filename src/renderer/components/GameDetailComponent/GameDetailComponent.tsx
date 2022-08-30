@@ -272,7 +272,7 @@ const GameDetailComponent = () => {
                     disabled={threshold == -1 ? true : ((ryusakShadersCount + threshold) >= localShadersCount)}
                     onClick={() => shareShaders(metaData.id, dataPath, localShadersCount, ryusakShadersCount)}
                   >
-                    {threshold == -1 ? "Shader uploading is currently unavailable" : t("shareShaders")}
+                    {threshold == -1 ? t("shaderUploadingUnavailable") : t("shareShaders")}
                   </Button>
                 </p>
               </Box>

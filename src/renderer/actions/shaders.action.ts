@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import useStore from "./state";
 import useTranslation from "../i18n/I18nService";
 import { SetState } from "zustand/vanilla";
-import pirate from "../resources/pirate.gif";
+import dance from "../resources/dance.gif";
 import { invokeIpc } from "../utils";
 
 export interface IShaders {
@@ -43,7 +43,7 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
     }
 
     Swal.fire({
-      imageUrl: pirate,
+      imageUrl: dance,
       text: "Success !"
     });
     return set({ needRefreshShaders: !state.needRefreshShaders });
@@ -59,12 +59,6 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
       });
       return false;
     }
-
-    await Swal.fire({
-      icon: "info",
-      text: `${t("pickRyuDataPath")}. ${t("shadersCheck")}`,
-      allowOutsideClick: false
-    });
     const state = useStore.getState();
     const dlManagerFilename = t("shadersSharing");
 
@@ -92,17 +86,21 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
     state.removeFileAction(dlManagerFilename);
     ipcRenderer.removeListener("download-progress", onShadersShareProgress);
 
-    if (result !== true) {
+    if (result.error) {
       return Swal.fire({
         icon: "error",
-        text: result.code === "SHADER_CACHE_V1" ? t(result.code) : result.code
+        html: result.code == "SHADER_UPLOAD_FAIL"
+          ? t("SHADER_UPLOAD_FAIL").replace("{status}", result.message)
+          : result.code == "SHADER_WEBHOOK_FAIL"
+            ? t("SHADER_WEBHOOK_FAIL").replace("{details}", result.message)
+            : result.code
       });
     }
 
     localStorage.setItem(key, "true");
 
     return Swal.fire({
-      imageUrl: pirate,
+      imageUrl: dance,
       html: t("shadersShared"),
     });
   }

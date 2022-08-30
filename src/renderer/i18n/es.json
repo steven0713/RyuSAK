@@ -33,7 +33,7 @@
   "refreshInfo": "Se refrescó correctamente! Ten en cuenta que tu juego solo se mostrará si lo abriste al menos una vez en el emulador",
   "modInstalled": "Mod instalado correctamente en: <code>{path}</code>",
   "shaderInfo": "Shaders son pequeños programas que corren en una tarjeta gráfica que son responsables de renderizar terrenos, personajes, explosiones, pasto, etc. Como una PC no puede ejecutar directamente los shaders, primero tiene que traducirlos a un formato que la PC pueda entender. Este proceso de traducción consume bastante tiempo y lo notarás en dos maneras :<br /><br />- Cualquier shader nuevo que sea encontrado, causará que la emulación se detenga hasta que la traducción haya sido finalizada, lo que causa trabas y caída de FPS. Cuando cargás un juego por primera vez, mucha traducción pasará. Al estar jugando mas tiempo, las trabas serán cada vez menos.<br /><br />- El emulador guardara cualquier shader que el juego utilice (osea los convierte en caché). Cuando inicias un juego, el emulador se tomará un tiempo cargando esos shaders guardados para prevenir las trabas que pasaban antes.",
-  "shaderThreshold": "Eso significa que puedes compartir shaders si tu conteo de shaders local es mayor al que ya tiene RyuSAK. Esto es basado en cuantas submisiones ya tenemos y nuestra carga de trabajo. Revisando nuestras submisiones puede consumir bastante tiempo y no vale nuestro esfuerzo si el recuento está por debajo de la variable umbral. Submisiones están limitadas a 3 por usuario por hora por ahora para prevenir que los servidores sean sobrecargados.",
+  "shaderThreshold": "Eso significa que puedes compartir shaders si tu conteo de shaders local es mayor al que ya tiene RyuSAK.",
   "localShadersCount": "Conteo de shaders locales",
   "ryusakShadersCount": "Conteo de shaders en la nube de RyuSAK",
   "dlShaders": "Descargar Shaders",
@@ -42,7 +42,6 @@
   "threshold": "Umbral",
   "refresh": "Refrescar",
   "OPERATION_CANCELED": "Has cancelado la operación.",
-  "INVALID_RYUJINX_BINARY": "Este no es un archivo binario válido de Ryujinx.",
   "EMULATOR_PATH_ALREADY_EXISTS": "Ya has agregado este directorio a RyuSAK.",
   "FETCH_FAILED": "No se pudo conseguir el recurso, por favor inténtelo de nuevo."
 }

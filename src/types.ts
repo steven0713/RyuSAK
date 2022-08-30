@@ -7,6 +7,15 @@ export type MirrorFileMeta = {
 
 export type MirrorDirMeta = Array<MirrorFileMeta>;
 
+export type MirrorUploadResponse = {
+  fileSize: number,
+  fileName: string,
+  fileId: string,
+  contentType: string,
+  deletionTime: string,
+  deletionToken: string
+}
+
 export type RyusakShaders = {
   [key: string]: number;
 };

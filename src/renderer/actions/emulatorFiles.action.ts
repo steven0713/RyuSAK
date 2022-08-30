@@ -1,7 +1,7 @@
 import { GetState, SetState } from "zustand/vanilla";
 import { ipcRenderer } from "electron";
 import Swal from "sweetalert2";
-import pirate from "../resources/pirate.gif";
+import dance from "../resources/dance.gif";
 import useStore from "./state";
 import { IAlert } from "./alert.action";
 import useTranslation, { I18nKeys } from "../i18n/I18nService";
@@ -32,14 +32,14 @@ const createEmulatorFilesSLice = (_set: SetState<{ }>, get: GetState<Partial<IAl
 
     get().closeAlertAction();
     return Swal.fire({
-      imageUrl: pirate,
+      imageUrl: dance,
       html: `<p style="padding: 5px">${t("firmwareLocation")} : <code>${extractPath}</code></p>`,
     });
   },
   downloadKeysAction: async (dataPath: string) => {
     const result = await invokeIpc("install-keys", dataPath);
     Swal.fire({
-      imageUrl: pirate,
+      imageUrl: dance,
       html: `${t("keysLocation")} : <code>${result}</code>`
     });
   }

@@ -6,7 +6,7 @@ export type searchProps = [string];
 
 export const searchGameBana = async (...args: searchProps): Promise<GameBananaMod[]> => {
   const [name] = args;
-  const response = await HttpService.searchGameBana(name) as { _idRow: number }[];
+  const response = await HttpService.searchGameBanana(name) as { _idRow: number }[];
 
   if (response.length === 0) {
     return;

@@ -3,7 +3,7 @@ import useStore from "./state";
 import { ipcRenderer } from "electron";
 import Swal from "sweetalert2";
 import useTranslation from "../i18n/I18nService";
-import pirate from "../resources/pirate.gif";
+import dance from "../resources/dance.gif";
 import { invokeIpc } from "../utils";
 
 const { t } = useTranslation();
@@ -45,7 +45,7 @@ const createDownloadModSlice = (set: SetState<ISaveAction>): ISaveAction => ({
     }
 
     Swal.fire({
-      imageUrl: pirate,
+      imageUrl: dance,
       html: t("modInstalled").replace("{path}", result)
     });
   }

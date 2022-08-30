@@ -1,5 +1,5 @@
 import { URL } from "url";
-import fetch, { RequestInit } from "node-fetch";
+import fetch, { RequestInit, HeadersInit, BodyInit } from "node-fetch";
 import pRetry from "p-retry";
 import { app, BrowserWindow, ipcMain } from "electron";
 import http from "http";
@@ -22,12 +22,14 @@ export enum HTTP_PATHS {
   MOD_DOWNLOAD      = "/json/archive/nintendo/switch/mods/{title_id}/{version}/{name}/",
   SAVES_LIST        = "/json/archive/nintendo/switch/savegames/",
   SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
-  SHADER_ZIP        = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
+  SHADERS_ZIP       = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
   SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
   THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
 export enum OTHER_URLS {
+  SHADERS_UPLOAD     = "https://send.nukes.wtf/upload/",
+  SHADERS_POST       = "https://discord.com/api/webhooks/1013993198537941083/30P1JsEyExC5nz3toqcE_YWosCJJh-DuQzF8DBtaG2ZJj64FJJ6pMS2rSxB7M0CGurRP",
   RELEASE_INFO       = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
   COMPAT_LIST        = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
   ESHOP_DATA         = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
@@ -106,7 +108,24 @@ class HttpService {
     ) as Promise<any>;
   }
 
-  public async fetchWithProgress(path: string, destPath: string, mainWindow: BrowserWindow, eventName: string) {
+  public async post(url: string, body: BodyInit, headers: HeadersInit = null) {
+    return this.fetch(url, {
+      agent: this.httpsAgent,
+      method: "POST",
+      body,
+      headers
+    });
+  }
+
+  public async postJSON(url: string, obj: any) {
+    return this.post(
+      url,
+      JSON.stringify(obj),
+      { "Content-Type": "application/json" }
+    );
+  }
+
+  public async getWithProgress(path: string, destPath: string, mainWindow: BrowserWindow, eventName: string) {
     const url = new URL(path, CDN_URL);
     const fileStream = fs.createWriteStream(destPath);
     const controller = new AbortController();
@@ -234,7 +253,7 @@ class HttpService {
     return this.get(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER");
   }
 
-  public async searchGameBana(query: string) {
+  public async searchGameBanana(query: string) {
     return this.get(OTHER_URLS.GAME_BANANA_SEARCH.replace("{query}", query));
   }
 
