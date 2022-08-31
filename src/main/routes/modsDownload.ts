@@ -2,7 +2,6 @@ import HttpService from "../services/HttpService";
 import fs from "fs-extra";
 import path from "path";
 import { BrowserWindow } from "electron";
-import { MirrorDirMeta } from "../../types";
 import Zip from "adm-zip";
 import glob from "glob";
 
@@ -14,7 +13,7 @@ export type downloadModProps = [string, string, string, string];
 
 export const getModsVersions = async (...args: getModsVersionsProps) => {
   const [titleId] = args;
-  return HttpService.getModVersions(titleId) as Promise<MirrorDirMeta>;
+  return HttpService.getModVersions(titleId);
 };
 
 export const getModsListForVersion = async (...args: getModsListForVersionProps) => {

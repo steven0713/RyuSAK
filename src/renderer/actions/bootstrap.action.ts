@@ -16,6 +16,7 @@ interface IBootstrap {
   latestVersion?: string;
   currentVersion?: string;
   threshold?: number;
+  shadersMinVersion?: number;
   settings: Settings;
 }
 
@@ -29,6 +30,8 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
   firmwareVersion: "",
   latestVersion: null,
   currentVersion: null,
+  threshold: -1,
+  shadersMinVersion: null,
   settings: {},
   bootstrapAppAction: async () => {
     const [
@@ -39,7 +42,8 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
       firmwareVersion,
       latestVersion,
       currentVersion,
-      threshold
+      threshold,
+      shadersMinVersion
     ] = await invokeIpc("load-components");
 
     const dayInMilliseconds = 1000 * 60 * 60 * 24;
@@ -75,7 +79,8 @@ const createBootstrapSlice = (set: SetState<IBootstrap>, get: GetState<IDownload
       firmwareVersion,
       latestVersion,
       currentVersion,
-      threshold
+      threshold,
+      shadersMinVersion
     });
   }
 });

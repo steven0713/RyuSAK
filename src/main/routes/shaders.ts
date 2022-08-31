@@ -8,7 +8,7 @@ import { Buffer } from "buffer";;
 import FormData from "form-data";
 import { MirrorUploadResponse } from "../../types";
 
-export type countShadersProps = [string, string];
+export type countShadersProps = [string, string, number];
 
 export type installShadersProps = [string, string];
 
@@ -19,7 +19,7 @@ export const writeZipAsync = (archive: zip, path: string): Promise<Error> => new
 });
 
 export const countShaders = async (...args: countShadersProps): Promise<number> => {
-  const [titleId, dataPath] = args;
+  const [titleId, dataPath, minVersion] = args;
   const shaderTocFile = path.resolve(dataPath, "games", titleId.toLocaleLowerCase(), "cache", "shader", "shared.toc");
 
   if (!await fs.pathExists(shaderTocFile)) {
@@ -33,8 +33,7 @@ export const countShaders = async (...args: countShadersProps): Promise<number> 
   const cacheVersion = buffer.readUInt32LE();
   await fs.close(fd);
 
-  // ((1 << 16) | 2) aka v1.2
-  if (cacheVersion < 65538) {
+  if (cacheVersion < minVersion) {
     return 0;
   }
 
@@ -140,12 +139,14 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
             name: "Deletion Time",
             value: uploadJson.deletionTime
           }
-        ]
+        ],
+        title: "Download",
+        url: `https://send.nukes.wtf/${uploadJson.fileId}`
       }
     ]
   };
 
-  const webhookRes = await HttpService.postJSON(OTHER_URLS.SHADERS_POST, message);
+  const webhookRes = await HttpService.postJSON(HTTP_PATHS.SHADERS_POST, message);
   if (webhookRes.ok) {
     return { error: false, code: null, message: null };
   } else {

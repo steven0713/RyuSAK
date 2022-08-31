@@ -14,7 +14,7 @@ const ryujinxCompatibility = async (...args: ryujinxCompatibilityProps) => {
     return memoryDb[titleId];
   }
 
-  let compatData = <GithubIssue> (await HttpService.getRyujinxCompatibility(titleId).catch(() => null));
+  let compatData: GithubIssue = await HttpService.getRyujinxCompatibility(titleId).catch(() => null);
   compatData.mode = "id";
 
   if (!compatData.items)
@@ -23,7 +23,7 @@ const ryujinxCompatibility = async (...args: ryujinxCompatibilityProps) => {
   // In case there is no compatibility found, try a search by name instead titleId
   if (compatData.items.length === 0) {
     const metadata = await EShopMetaService.getEShopMeta(titleId);
-    compatData = <GithubIssue> (await HttpService.getRyujinxCompatibility(metadata.name).catch(() => null));
+    compatData = await HttpService.getRyujinxCompatibility(metadata.name).catch(() => null);
     if (compatData.items.length > 0) {
       compatData.mode = "name";
     }

@@ -7,7 +7,7 @@ import https from "https";
 import httpsProxyAgent from "https-proxy-agent";
 import fs from "fs-extra";
 import path from "path";
-import { MirrorDirMeta } from "../../types";
+import { MirrorDirMeta, RyusakShaders, GithubIssue } from "../../types";
 import Enumerable from "linq";
 
 const USER_AGENT: string = `RyuSAK/${app.getVersion()}`;
@@ -22,14 +22,15 @@ export enum HTTP_PATHS {
   MOD_DOWNLOAD      = "/json/archive/nintendo/switch/mods/{title_id}/{version}/{name}/",
   SAVES_LIST        = "/json/archive/nintendo/switch/savegames/",
   SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
-  SHADERS_ZIP       = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
   SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
+  SHADERS_MIN_VER   = "/archive/nintendo/switch/ryusak/shader_min_version.txt",
+  SHADERS_POST      = "/push_shader.php",
+  SHADERS_ZIP       = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
   THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
 export enum OTHER_URLS {
   SHADERS_UPLOAD     = "https://send.nukes.wtf/upload/",
-  SHADERS_POST       = "https://discord.com/api/webhooks/1013993198537941083/30P1JsEyExC5nz3toqcE_YWosCJJh-DuQzF8DBtaG2ZJj64FJJ6pMS2rSxB7M0CGurRP",
   RELEASE_INFO       = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
   COMPAT_LIST        = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
   ESHOP_DATA         = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
@@ -108,8 +109,9 @@ class HttpService {
     ) as Promise<any>;
   }
 
-  public async post(url: string, body: BodyInit, headers: HeadersInit = null) {
-    return this.fetch(url, {
+  public async post(path: string, body: BodyInit, headers: HeadersInit = null) {
+    const url = new URL(path, CDN_URL);
+    return this.fetch(url.href, {
       agent: this.httpsAgent,
       method: "POST",
       body,
@@ -117,9 +119,9 @@ class HttpService {
     });
   }
 
-  public async postJSON(url: string, obj: any) {
+  public async postJSON(path: string, obj: any) {
     return this.post(
-      url,
+      path,
       JSON.stringify(obj),
       { "Content-Type": "application/json" }
     );
@@ -168,19 +170,23 @@ class HttpService {
   }
 
   public async downloadRyujinxShaderList() {
-    return this.get(HTTP_PATHS.SHADERS_LIST);
+    return this.get(HTTP_PATHS.SHADERS_LIST) as Promise<RyusakShaders>;
   }
 
   public async downloadSaveList() {
-    return this.get(HTTP_PATHS.SAVES_LIST);
+    return this.get(HTTP_PATHS.SAVES_LIST) as Promise<MirrorDirMeta>;
   }
 
   public async downloadModsTitleList() {
-    return this.get(HTTP_PATHS.MODS_TITLE_LIST);
+    return this.get(HTTP_PATHS.MODS_TITLE_LIST) as Promise<MirrorDirMeta>;
   }
 
   public async getThreshold() {
-    return this.get(HTTP_PATHS.THRESHOLD, "TXT").catch(() => -1);
+    return this.get(HTTP_PATHS.THRESHOLD, "TXT").catch(() => -1) as Promise<number>;
+  }
+
+  public async getShadersMinVersion() {
+    return this.get(HTTP_PATHS.SHADERS_MIN_VER, "TXT") as Promise<number>;
   }
 
   public async getFirmwareVersion() {
@@ -207,22 +213,22 @@ class HttpService {
   }
 
   public async downloadKeys() {
-    return this.get(OTHER_URLS.KEYS, "TXT");
+    return this.get(OTHER_URLS.KEYS, "TXT") as Promise<string>;
   }
 
   public async downloadEshopData() {
-    return this.get(OTHER_URLS.ESHOP_DATA, "TXT");
+    return this.get(OTHER_URLS.ESHOP_DATA, "TXT") as Promise<string>;
   }
 
   public async getRyujinxCompatibility(query: string) {
     // Do not use this.get because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
     return this.fetch(OTHER_URLS.COMPAT_LIST.replace("{query}", query), {
       agent: this.httpsAgent
-    }).then(r => r.json());
+    }).then(r => r.json()) as Promise<GithubIssue>;
   }
 
   public async getModVersions(titleId: string) {
-    return this.get(HTTP_PATHS.MODS_VERSION_LIST.replace("{title_id}", titleId));
+    return this.get(HTTP_PATHS.MODS_VERSION_LIST.replace("{title_id}", titleId)) as Promise<MirrorDirMeta>;
   }
 
   public async getModsForVersion(titleId: string, version: string) {
@@ -250,7 +256,7 @@ class HttpService {
   }
 
   public async downloadSave(fileName: string) {
-    return this.get(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER");
+    return this.get(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER") as Promise<ArrayBuffer>;
   }
 
   public async searchGameBanana(query: string) {
@@ -258,7 +264,7 @@ class HttpService {
   }
 
   public async getGameBananaPage(id: number) {
-    return this.get(OTHER_URLS.GAME_BANANA_PAGE.replace("{id}", id.toString()), "TXT");
+    return this.get(OTHER_URLS.GAME_BANANA_PAGE.replace("{id}", id.toString()), "TXT") as Promise<string>;
   }
 }
 

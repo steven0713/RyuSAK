@@ -47,10 +47,10 @@ const DownloadModComponent = () => {
   useEffect(() => {
     switch (state) {
       case "VERSION":
-        invokeIpc("get-mods-versions", currentMod).then(d => setItems(d as any));
+        invokeIpc("get-mods-versions", currentMod).then(d => setItems(d));
       break;
       case "MOD":
-        invokeIpc("get-mods-list-for-version", currentMod, version).then(d => setItems(d as any));
+        invokeIpc("get-mods-list-for-version", currentMod, version).then(d => setItems(d));
       break;
       case "DOWNLOAD":
         downloadModAction(currentMod, version, pickedMod, dataPath);

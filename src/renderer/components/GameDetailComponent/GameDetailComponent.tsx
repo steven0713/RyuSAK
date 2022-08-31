@@ -59,7 +59,8 @@ const GameDetailComponent = () => {
     shareShaders,
     deleteGameAction,
     deletedGame,
-    threshold
+    threshold,
+    shadersMinVersion
   ] = useStore(state => [
     state.saves,
     state.setCurrentSaveDownloadAction,
@@ -71,7 +72,8 @@ const GameDetailComponent = () => {
     state.shareShaders,
     state.deleteGameAction,
     state.deletedGame,
-    state.threshold
+    state.threshold,
+    state.shadersMinVersion
   ]);
   const [metaData, setMetaData]: [EShopTitleMeta, Function] = useState(null);
   const [compat, setCompat] = useState<GithubLabel[]>(null);
@@ -111,7 +113,7 @@ const GameDetailComponent = () => {
   useEffect(() => {
     invokeIpc("build-metadata-from-titleId", titleId).then(d => setMetaData(d));
     invokeIpc("getRyujinxCompatibility", titleId).then(extractCompatibilityLabels);
-    invokeIpc("count-shaders", titleId, dataPath).then(setLocalShadersCount);
+    invokeIpc("count-shaders", titleId, dataPath, shadersMinVersion).then(setLocalShadersCount);
   }, [titleId, needRefreshShaders]);
 
   const renderCompatibilityData = () => (
@@ -301,11 +303,6 @@ const GameDetailComponent = () => {
               </Box>
             </GridWithVerticalSeparator>
           </GridWithVerticalSeparator>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Alert severity="warning">Due to Ryujinx changes, shaders does not work anymore with LDN build. If you see RyuSAK has a lower shader count than you locally, I suggest to download again shaders from RyuSAK.</Alert>
-          <Divider />
         </Grid>
 
         <Grid item xs={12}>
