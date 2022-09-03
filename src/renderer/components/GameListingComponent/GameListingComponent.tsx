@@ -17,6 +17,8 @@ interface IConfigContainer {
   config: RyujinxConfigMeta;
 }
 
+const nonAlphaNumeric = new RegExp(/[^a-z0-9\s]/g);
+
 const Label = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   border: "1px solid black",
@@ -53,9 +55,13 @@ const GameListingComponent = ({ config }: IConfigContainer) => {
   // 1. Scan games on user system
   // 2. Build metadata from eshop with titleId as argument
   const createLibrary = async () => {
-    const titleIds = await invokeIpc("scan-games", config.path);
+    let titleIds = await invokeIpc("scan-games", config.path);
+    titleIds = titleIds.filter(id => id !== "0000000000000000"); // Homebrew app
+
     const gamesCollection: EShopTitleMeta[] = await Promise.all(titleIds.map(async (i: string) => invokeIpc("build-metadata-from-titleId", i)));
-    setGames(gamesCollection.filter(i => i.id !== "0000000000000000")); // Homebrew app
+    gamesCollection.forEach(title => title.normalizedName = title.name.toLowerCase().normalize("NFKD").replace(nonAlphaNumeric, ""));
+
+    setGames(gamesCollection);
   };
 
   useEffect(() => {
@@ -63,8 +69,9 @@ const GameListingComponent = ({ config }: IConfigContainer) => {
   }, [config]);
 
   useEffect(() => {
+    const searchTermLowerCase = searchTerm.toLowerCase();
     setFilteredGames(searchTerm.length > 0
-      ? games.filter(item => searchTerm.length > 0 ? item.name.toLowerCase().includes(searchTerm.toLowerCase()) : true)
+      ? games.filter(title => title.normalizedName.includes(searchTermLowerCase))
       : games);
     setIsLoaded(true);
   }, [games, searchTerm]);

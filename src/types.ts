@@ -31,6 +31,7 @@ export type EShopTitleMeta = {
   id: string;
   name: string;
   iconUrl: string;
+  normalizedName?: string;
 };
 
 export type EShopTitles = {
