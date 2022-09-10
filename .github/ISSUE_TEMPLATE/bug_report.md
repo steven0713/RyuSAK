@@ -20,9 +20,6 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Did you use a fitgirl repack to install Ryujinx?**
-[Yes/no]
-
 **Screenshots**
 Add screenshots to help explain your problem. Even if it seems irrelevant, it may help.
 

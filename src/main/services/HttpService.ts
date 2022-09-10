@@ -72,9 +72,10 @@ class HttpService {
   }
 
   protected fetch(url: string, req: RequestInit = { }) {
+    req.agent ??= this.httpsAgent;
     req.headers = {
-      ...req.headers,
-      "User-Agent": USER_AGENT
+      "User-Agent": USER_AGENT,
+      ...req.headers
     };
 
     return fetch(url, req);
@@ -85,11 +86,7 @@ class HttpService {
     const url = new URL(path, CDN_URL);
     return pRetry(
       async () => {
-        const response = await this.fetch(url.href, {
-          agent: url.protocol == "https:"
-            ? this.httpsAgent
-            : this.httpAgent
-        });
+        const response = await this.fetch(url.href);
 
         if (response.status >= 400) {
           throw new pRetry.AbortError(response.statusText);
@@ -112,7 +109,6 @@ class HttpService {
   public async post(path: string, body: BodyInit, headers: HeadersInit = null) {
     const url = new URL(path, CDN_URL);
     return this.fetch(url.href, {
-      agent: this.httpsAgent,
       method: "POST",
       body,
       headers
@@ -133,8 +129,7 @@ class HttpService {
     const controller = new AbortController();
 
     const response = await this.fetch(url.href, {
-      signal: controller.signal,
-      agent: this.httpsAgent
+      signal: controller.signal
     });
 
     let chunkLength = 0;
@@ -182,11 +177,14 @@ class HttpService {
   }
 
   public async getThreshold() {
-    return this.get(HTTP_PATHS.THRESHOLD, "TXT").catch(() => -1) as Promise<number>;
+    return this.get(HTTP_PATHS.THRESHOLD, "TXT")
+      .then(threshold => Number(threshold))
+      .catch(() => -1) as Promise<number>;
   }
 
   public async getShadersMinVersion() {
-    return this.get(HTTP_PATHS.SHADERS_MIN_VER, "TXT") as Promise<number>;
+    return this.get(HTTP_PATHS.SHADERS_MIN_VER, "TXT")
+      .then(ver => Number(ver)) as Promise<number>;
   }
 
   public async getFirmwareVersion() {
@@ -198,9 +196,7 @@ class HttpService {
 
   public async getLatestApplicationVersion() {
     // Do not use this.get because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
-    const response = await this.fetch(OTHER_URLS.RELEASE_INFO, {
-      agent: this.httpsAgent
-    });
+    const response = await this.fetch(OTHER_URLS.RELEASE_INFO);
 
     if (response.status != 200) {
       return app.getVersion();
@@ -212,8 +208,24 @@ class HttpService {
     return tagName.replace("v", "");
   }
 
-  public async downloadKeys() {
-    return this.get(OTHER_URLS.KEYS, "TXT") as Promise<string>;
+  public async downloadKeys(retries = 3) {
+    return pRetry(
+      async () => {
+        const response = await this.fetch(OTHER_URLS.KEYS, {
+          agent: this.httpAgent,
+          headers: {
+            "User-Agent": "node-fetch"
+          }
+        });
+
+        if (response.status >= 400) {
+          throw new pRetry.AbortError(response.statusText);
+        }
+
+        return response.text();
+      },
+      { retries }
+    )
   }
 
   public async downloadEshopData() {
@@ -222,9 +234,8 @@ class HttpService {
 
   public async getRyujinxCompatibility(query: string) {
     // Do not use this.get because we do not want exponential backoff strategy since GitHub api is limited to 10 requests per minute for unauthenticated requests
-    return this.fetch(OTHER_URLS.COMPAT_LIST.replace("{query}", query), {
-      agent: this.httpsAgent
-    }).then(r => r.json()) as Promise<GithubIssue>;
+    return this.fetch(OTHER_URLS.COMPAT_LIST.replace("{query}", query))
+      .then(r => r.json()) as Promise<GithubIssue>;
   }
 
   public async getModVersions(titleId: string) {
