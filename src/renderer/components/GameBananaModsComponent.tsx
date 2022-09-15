@@ -33,68 +33,60 @@ const GameBanaCover = styled(Box)(() => ({
 }));
 
 type Props = {
-  title?: string,
+  titleName?: string,
 };
 
-const GameBananaModsComponent = ({ title }: Props) => {
-  const [gameBananaMods, setGameBananaMods] = useState<GameBananaMod[]>(null);
-  const [ipcPending, setIpcPending] = useState(true);
+const GameBananaModsComponent = ({ titleName }: Props) => {
+  const [gameBananaMods, setGameBananaMods] = useState<Array<GameBananaMod>>(null);
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (title) {
-      invokeIpc("search-gamebanana", title).then(d => {
-        setGameBananaMods(d || []);
-        setIpcPending(false);
+    if (titleName) {
+      console.log(titleName);
+      invokeIpc("search-gamebanana", titleName).then(mods => {
+        setGameBananaMods(mods || []);
+        setLoading(false);
       });
     }
-  }, [title]);
+  }, [titleName]);
 
-  const renderModsList = () => (
-    <Box pb={3}>
-      {
-        gameBananaMods.length === 0
-          ? <Alert severity="info">{t("gamebananaNoMods")}</Alert>
-          : <Grid container spacing={2}>
-            {
-              (gameBananaMods).map(mod => (
-                <Grid key={mod.name} item xs={2}>
-                  <Tooltip arrow title={mod.name} placement="top">
-                    <a style={{ textDecoration: "none", color: "#FFF" }} href={mod.url} className="no-blank-icon" target="_blank">
-                      <Label title={mod.name}>{mod.name}</Label>
-                      <GameBanaCover style={{ backgroundImage: `url(${ mod.cover })` }} />
-                    </a>
-                  </Tooltip>
-                </Grid>
-              ))
-            }
-          </Grid>
-      }
-    </Box>
-  );
-
-  return (
-    <>
-      <h3>{t("gamebananaModsTitle")}</h3>
-      <Divider />
-      <br />
-      {
-        (!ipcPending)
-          ? renderModsList()
-          : (
-            <Box pt={16} style={{ position: "relative" }}>
-              <div className="loader-container">
-                <div className="lds-ripple">
-                  <div></div>
-                  <div></div>
-                </div>
-                <Typography variant="h6">{t("gameBananaLoading")}</Typography>
+  return <>
+    <h3>{t("gamebananaModsTitle")}</h3>
+    <Divider />
+    <br />
+    {
+      loading
+        ? <Box pt={16} style={{ position: "relative" }}>
+            <div className="centred-container">
+              <div className="ripple-container">
+                <span className="loading-ripple" />
               </div>
-            </Box>
-          )
-      }
-    </>
-  );
+              <Typography variant="h6">{t("gameBananaLoading")}</Typography>
+            </div>
+          </Box>
+        : <Box pb={3}>
+          {
+            gameBananaMods.length === 0
+              ? <Alert severity="info">{t("gamebananaNoMods")}</Alert>
+              : <Grid container spacing={2}>
+                {
+                  (gameBananaMods).map(mod => (
+                    <Grid key={mod.name} item xs={2}>
+                      <Tooltip arrow title={mod.name} placement="top">
+                        <a style={{ textDecoration: "none", color: "#FFF" }} href={mod.url} className="no-blank-icon" target="_blank">
+                          <Label title={mod.name}>{mod.name}</Label>
+                          <GameBanaCover style={{ backgroundImage: `url(${mod.cover})` }} />
+                        </a>
+                      </Tooltip>
+                    </Grid>
+                  ))
+                }
+              </Grid>
+          }
+          </Box>
+    }
+  </>;
 };
 
 export default GameBananaModsComponent;

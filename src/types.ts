@@ -68,9 +68,28 @@ export type GithubLabel = {
 export type GithubIssue = {
   items: {
     state: string;
-    labels: GithubLabel[];
+    labels: Array<GithubLabel>;
   }[];
   mode?: "id" | "name";
+};
+
+export type GameBananaSearchGameResult = {
+  id: number,
+  name: string
+};
+
+export type GameBananaSearchModResult = {
+  _aRecords: Array<{
+    _sName: string,
+    _sProfileUrl: string,
+    _aPreviewMedia: {
+      _aImages: Array<{
+        _sBaseUrl: string,
+        _sFile: string,
+        _sFile220: string
+      }>
+    }
+  }>
 };
 
 export type GameBananaMod = {

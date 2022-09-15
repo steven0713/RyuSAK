@@ -9,7 +9,6 @@
   "deleteGameNotice": "此选项将删除此游戏的着色器缓存、CPU 缓存和模组文件夹。此操作无法撤消。",
   "shadersSharing": "共享着色器...",
   "shadersShared": "您的着色器已提交！",
-  "gamebananaModsTitle": "Gamebanana 模组（GameBanana 上最多 20 个下载次数最多的模组）",
   "gamebananaNoMods": "在 Gamebanana 上找不到任何模组",
   "gameBananaLoading": "正在从 Gamebanana 加载模组 ...",
   "agree": "我同意 ToS",

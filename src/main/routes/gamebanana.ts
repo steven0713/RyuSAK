@@ -1,36 +1,26 @@
 import HttpService from "../services/HttpService";
-import cheerio from "cheerio";
 import { GameBananaMod } from "../../types";
+
+const nonAscii = new RegExp(/[^\x00-\x7F]/g);
 
 export type searchProps = [string];
 
-export const searchGameBana = async (...args: searchProps): Promise<GameBananaMod[]> => {
+export const searchGameBanana = async (...args: searchProps): Promise<Array<GameBananaMod>> => {
   const [name] = args;
-  const response = await HttpService.searchGameBanana(name) as { _idRow: number }[];
 
-  if (response.length === 0) {
+  const results = await HttpService.gameBananaSearchGame(name.replace(nonAscii, ""));
+  if (!results || results.length === 0) {
     return;
   }
 
-  const modPageContent = await HttpService.getGameBananaPage(response[0]._idRow);
-
-  if (!modPageContent) {
+  const mods = (await HttpService.gameBananaSearchMods(results[0].id))._aRecords;
+  if (!mods || mods.length === 0) {
     return [];
   }
 
-  const $ = cheerio.load(modPageContent);
-  const modsIdentifiers = $("recordCell[class='Identifiers']");
-  const modsPreviews = $("recordCell[class='Preview']");
-
-  const mods = modsIdentifiers.map((i, element) => {
-    if (!modsPreviews[i]) return {};
-    const modElement: any = $(element).find("a[class='Name']");
-    return {
-      name: modElement.text().trim(),
-      url: modElement.attr("href"),
-      cover: $(modsPreviews[i]).find("img").attr("src")
-    };
-  });
-
-  return Object.values(mods).filter(d => d.name && d.url && d.cover) as GameBananaMod[];
+  return mods.map(mod => ({
+    name: mod._sName,
+    url: mod._sProfileUrl,
+    cover: "https://images.gamebanana.com/img/ss/mods/" + (mod._aPreviewMedia._aImages[0]._sFile220 || mod._aPreviewMedia._aImages[0]._sFile)
+  }));
 };

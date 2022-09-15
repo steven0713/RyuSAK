@@ -9,7 +9,6 @@
   "deleteGameNotice": "Bu seçenek bu oyunun shader cache, CPU cache ve mod klasörlerini silecektir. Bu eylem geri alınamaz!",
   "shadersSharing": "Shader paylaşılıyor ...",
   "shadersShared": "Shaderlarınız paylaşıldı!",
-  "gamebananaModsTitle": "Gamebanana modları (Gamebanana'da en çok indirilen 20 ye kadar mod)",
   "gamebananaNoMods": "Gamebanana'da mod bulunmuyor",
   "gameBananaLoading": "Gamebanana'dan modlar yükleniyor ...",
   "tos": "By using RyuSAK, you agree to <i>never</i> ask for support or talk about it in official emulator channels.</br></br>Use the discord link in top right if you require assistance.",

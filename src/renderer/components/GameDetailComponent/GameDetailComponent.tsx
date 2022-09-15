@@ -306,7 +306,7 @@ const GameDetailComponent = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <GameBananaModsComponent title={metaData?.name} />
+          <GameBananaModsComponent titleName={metaData?.name} />
         </Grid>
       </Grid>
     </Box>

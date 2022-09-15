@@ -7,7 +7,7 @@ import https from "https";
 import httpsProxyAgent from "https-proxy-agent";
 import fs from "fs-extra";
 import path from "path";
-import { MirrorDirMeta, RyusakShaders, GithubIssue } from "../../types";
+import { MirrorDirMeta, RyusakShaders, GithubIssue, GameBananaSearchGameResult, GameBananaSearchModResult } from "../../types";
 import Enumerable from "linq";
 
 const USER_AGENT: string = `RyuSAK/${app.getVersion()}`;
@@ -30,13 +30,13 @@ export enum HTTP_PATHS {
 }
 
 export enum OTHER_URLS {
-  SHADERS_UPLOAD     = "https://send.nukes.wtf/upload/",
-  RELEASE_INFO       = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
-  COMPAT_LIST        = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
-  ESHOP_DATA         = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
-  GAME_BANANA_SEARCH = "https://gamebanana.com/apiv7/Util/Game/NameMatch?_sName={query}&_nPerpage=10&_nPage=1",
-  GAME_BANANA_PAGE   = "https://gamebanana.com/mods/games/{id}?mid=SubmissionsList&vl[preset]=most_dld&vl%5Border%5D=downloads",
-  KEYS               = "http://emusak.coveforme.com/firmware/prod.keys",
+  SHADERS_UPLOAD          = "https://send.nukes.wtf/upload/",
+  RELEASE_INFO            = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
+  COMPAT_LIST             = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
+  ESHOP_DATA              = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
+  GAME_BANANA_SEARCH_GAME = "https://api.gamebanana.com/Core/List/Like?itemtype=Game&field=name&match={match}",
+  GAME_BANANA_SEARCH_MODS = "https://gamebanana.com/apiv10/Mod/Index?_nPage=1&_nPerpage=50&_sSort=Generic_MostDownloaded&_aFilters[Generic_Game]={id}",
+  KEYS                    = "http://emusak.coveforme.com/firmware/prod.keys",
 }
 
 class HttpService {
@@ -270,12 +270,12 @@ class HttpService {
     return this.get(HTTP_PATHS.SAVES_DOWNLOAD.replace("{file_name}", fileName), "BUFFER") as Promise<ArrayBuffer>;
   }
 
-  public async searchGameBanana(query: string) {
-    return this.get(OTHER_URLS.GAME_BANANA_SEARCH.replace("{query}", query));
+  public async gameBananaSearchGame(match: string) {
+    return this.get(OTHER_URLS.GAME_BANANA_SEARCH_GAME.replace("{match}", match)) as Promise<Array<GameBananaSearchGameResult>>;
   }
 
-  public async getGameBananaPage(id: number) {
-    return this.get(OTHER_URLS.GAME_BANANA_PAGE.replace("{id}", id.toString()), "TXT") as Promise<string>;
+  public async gameBananaSearchMods(gameId: number) {
+    return this.get(OTHER_URLS.GAME_BANANA_SEARCH_MODS.replace("{id}", gameId.toString())) as Promise<GameBananaSearchModResult>;
   }
 }
 
