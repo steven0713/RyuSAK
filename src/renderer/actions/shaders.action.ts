@@ -91,9 +91,11 @@ const createShadersSlice = (set: SetState<IShaders>): IShaders => ({
         icon: "error",
         html: result.code == "SHADER_UPLOAD_FAIL"
           ? t("SHADER_UPLOAD_FAIL").replace("{status}", result.message)
-          : result.code == "SHADER_WEBHOOK_FAIL"
-            ? t("SHADER_WEBHOOK_FAIL").replace("{details}", result.message)
-            : result.code
+          : result.code == "SHADER_POST_FAIL"
+            ? t("SHADER_POST_FAIL").replace("{details}", result.message)
+            : result.code == "SHADER_POST_DUPLICATE"
+              ? t("SHADER_POST_DUPLICATE")
+              : result.code
       });
     }
 

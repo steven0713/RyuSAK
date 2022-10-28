@@ -23,13 +23,13 @@ export enum HTTP_PATHS {
   SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
   SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
   SHADERS_MIN_VER   = "/archive/nintendo/switch/ryusak/shader_min_version.txt",
-  SHADERS_POST      = "/push_shader.php",
   SHADERS_ZIP       = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
   THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
 export enum OTHER_URLS {
   SHADERS_UPLOAD          = "https://send.nukes.wtf/upload/",
+  SHADERS_POST            = "https://ryusak.lewd.wtf/",
   RELEASE_INFO            = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
   COMPAT_LIST             = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
   ESHOP_DATA              = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",

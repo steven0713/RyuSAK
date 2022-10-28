@@ -64,5 +64,6 @@
   "EMULATOR_PATH_ALREADY_EXISTS": "You already added this path to RyuSAK.",
   "FETCH_FAILED": "Unable to fetch resource, please retry.",
   "SHADER_UPLOAD_FAIL": "Failed to upload shader cache with status code {status}.",
-  "SHADER_WEBHOOK_FAIL": "Failed to post shader cache, please share the following details in the discord server:</br></br>{details}"
+  "SHADER_POST_FAIL": "Failed to post shader cache, please share the following details in the discord server:</br></br>{details}",
+  "SHADER_POST_DUPLICATE": "A shader cache with more shaders has already been submitted and is awaiting approval."
 }

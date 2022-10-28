@@ -101,58 +101,22 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
   }
 
   const uploadJson = await uploadRes.json() as MirrorUploadResponse;
-  const message = {
-    embeds: [
-      {
-        author: {
-          name: "RyuSAK",
-          url: "https://github.com/Ecks1337/RyuSAK",
-          icon_url: "https://raw.githubusercontent.com/Ecks1337/RyuSAK/master/src/assets/icon.ico"
-        },
-        color: 5055982,
-        fields: [
-          {
-            name: "Title Name",
-            value: metadata.name
-          },
-          {
-            name: "Title ID",
-            value: metadata.id
-          },
-          {
-            name: "Local Shader Count",
-            value: localCount
-          },
-          {
-            name: "RyuSAK Shader Count",
-            value: ryusakCount
-          },
-          {
-            name: "File ID",
-            value: uploadJson.fileId
-          },
-          {
-            name: "Deletion Token",
-            value: uploadJson.deletionToken
-          },
-          {
-            name: "Deletion Time",
-            value: uploadJson.deletionTime
-          }
-        ],
-        title: "Download",
-        url: `https://send.nukes.wtf/${uploadJson.fileId}`
-      }
-    ]
-  };
+  const postRes    = await HttpService.postJSON(OTHER_URLS.SHADERS_POST, {
+    name:          metadata.name,
+    titleId:       metadata.id,
+    fileId:        uploadJson.fileId,
+    deletionToken: uploadJson.deletionToken,
+    shaderCount:   localCount
+  })
 
-  const webhookRes = await HttpService.postJSON(HTTP_PATHS.SHADERS_POST, message);
-  if (webhookRes.ok) {
+  if (postRes.ok) {
     return { error: false, code: null, message: null };
+  } else if (postRes.status == 409) {
+    return { error: true, code: "SHADER_POST_DUPLICATE", message: null };
   } else {
     return {
       error: true,
-      code: "SHADER_WEBHOOK_FAIL",
+      code: "SHADER_POST_FAIL",
       message: `<code>Title Name: ${metadata.name}</br>Title ID: ${metadata.id}</br>Local Shader Count: ${localCount}</br>RyuSAK Shader Count: ${ryusakCount}</br>File ID: ${uploadJson.fileId}</br>Deletion Token: ${uploadJson.deletionToken}</br>Deletion Time: ${uploadJson.deletionTime}</code>`
     };
   }
