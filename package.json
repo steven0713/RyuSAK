@@ -72,7 +72,7 @@
     "react-i18next": "^11.12.0",
     "react-router-dom": "^6.2.2",
     "semver": "^7.3.5",
-    "sweetalert2": "^11.1.9",
+    "sweetalert2": "11.4.8",
     "zustand": "^3.6.0"
   }
 }
