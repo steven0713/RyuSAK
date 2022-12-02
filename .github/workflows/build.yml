@@ -2,8 +2,8 @@ name: Build
 
 on:
   push:
-    branches-ignore:
-      - 'wip*'
+    branches:
+      - 'master'
     tags:
       - 'v*'
   pull_request:
