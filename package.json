@@ -1,7 +1,7 @@
 {
   "name": "RyuSAK",
   "productName": "RyuSAK",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "RyuSAK",
   "repository": "https://github.com/Ecks1337/RyuSAK",
   "main": ".webpack/main",
