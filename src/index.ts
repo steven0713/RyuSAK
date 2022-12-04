@@ -28,9 +28,8 @@ function readFile(path: string) : string {
 
 ipcMain.handle("check-status", () => updateDownloaded);
 
-// Don't use appData to store cache if zip maker used
-// We can't setPath in linux appImage since it's read only, for now do this only for windows
-if (process.platform === "win32" && !process.argv.join("").includes("squirrel") && hasPortableFile) {
+// Don't use appData to store cache if portable mode is enabled
+if (hasPortableFile) {
   fs.ensureDirSync(cacheDir);
   app.setPath("userData", cacheDir);
 }
@@ -42,7 +41,6 @@ if (require("electron-squirrel-startup")) { // eslint-disable-line global-requir
 
 const gotTheLock = app.requestSingleInstanceLock();
 let mainWindow: BrowserWindow;
-let isPortable = false;
 
 const handleStartupEvent = function () {
   if (process.platform !== "win32") {
@@ -120,26 +118,22 @@ const createWindow = (): void => {
     mainWindow.center();
     mainWindow.show();
 
-    if (!isDev && process.platform === "win32") {
+    if (hasPortableFile) {
+      mainWindow.webContents.send("is-portable");
+    }
+    else if (!isDev && process.platform === "win32") {
       const feed = `https://update.electronjs.org/Ecks1337/RyuSAK/${process.platform}-${process.arch}/${app.getVersion()}`;
 
       autoUpdater.setFeedURL({
         url: feed
       });
 
-      // Check updates every 5mn, and at startup
+      // Check updates every 10 min, and at startup
       setInterval(() => {
-        if (!isPortable) {
-          autoUpdater.checkForUpdates();
-        }
-      }, 5 * 60 * 1000);
-
-      try {
         autoUpdater.checkForUpdates();
-      } catch(e) {
-        mainWindow.webContents.send("is-portable");
-        isPortable = true;
-      }
+      }, 10 * 60 * 1000);
+
+      autoUpdater.checkForUpdates();
 
       autoUpdater.on("update-available", () => mainWindow.webContents.send("update-available"));
       autoUpdater.on("update-downloaded", () => {
