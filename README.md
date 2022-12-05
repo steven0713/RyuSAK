@@ -31,7 +31,8 @@ Download the `RyuSAK-darwin-arm64-X.Y.Z.zip` file, then unzip it to your chosen 
 ### Linux
 
 #### Arch Linux
-Soon™
+Install the [ryusak](https://aur.archlinux.org/packages/ryusak) package with your favorite AUR helper.
+<br />NOTE: This package is maintained by a third-party
 
 #### Debian
 Download the `ryusak_X.Y.Z_amd64.deb` file, then install it with `sudo dpkg -i ./ryusak_X.Y.Z_amd64.deb`
