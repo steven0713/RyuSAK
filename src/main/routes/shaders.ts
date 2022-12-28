@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import zip from "adm-zip";
-import HttpService, { HTTP_PATHS, OTHER_URLS } from "../services/HttpService";
+import HttpService, { OTHER_URLS } from "../services/HttpService";
 import { BrowserWindow } from "electron";
 import EShopMetaService from "../services/EShopMetaService";
 import { Buffer } from "buffer";;
@@ -50,7 +50,7 @@ export const installShaders = async (mainWindow: BrowserWindow, ...args: install
   await fs.emptyDir(shaderCacheDir);
 
   const shaderCacheZipPath = path.resolve(shaderCacheDir, `${titleId}.zip`);
-  const result = await HttpService.getWithProgress(HTTP_PATHS.SHADERS_ZIP.replace("{title_id}", titleId), shaderCacheZipPath, mainWindow, titleId);
+  const result = await HttpService.getShadersZipWithProgress(titleId, shaderCacheZipPath, mainWindow);
 
   if (!result) {
     return null;
@@ -101,7 +101,7 @@ export const shareShaders = async (mainWindow: BrowserWindow, ...args: shareShad
   }
 
   const uploadJson = await uploadRes.json() as MirrorUploadResponse;
-  const postRes    = await HttpService.postJSON(OTHER_URLS.SHADERS_POST, {
+  const postRes    = await HttpService.postShaders({
     name:          metadata.name,
     titleId:       metadata.id,
     fileId:        uploadJson.fileId,

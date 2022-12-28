@@ -16,6 +16,15 @@ export type MirrorUploadResponse = {
   deletionToken: string
 }
 
+export type PostShadersBody = {
+  name: string,
+  titleId: string,
+  fileId: string,
+  deletionToken: string,
+  shaderCount: number,
+  shaderType?: string
+}
+
 export type RyusakShaders = {
   [key: string]: number;
 };

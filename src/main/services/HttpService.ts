@@ -6,7 +6,7 @@ import https from "https";
 import httpsProxyAgent from "https-proxy-agent";
 import fs from "fs-extra";
 import path from "path";
-import { MirrorDirMeta, RyusakShaders, GithubIssue, GameBananaSearchGameResult, GameBananaSearchModResult } from "../../types";
+import { MirrorDirMeta, PostShadersBody, RyusakShaders, GithubIssue, GameBananaSearchGameResult, GameBananaSearchModResult } from "../../types";
 import Enumerable from "linq";
 
 const USER_AGENT: string = `RyuSAK/${app.getVersion()}`;
@@ -21,9 +21,11 @@ export enum HTTP_PATHS {
   MOD_DOWNLOAD      = "/json/archive/nintendo/switch/mods/{title_id}/{version}/{name}/",
   SAVES_LIST        = "/json/archive/nintendo/switch/savegames/",
   SAVES_DOWNLOAD    = "/archive/nintendo/switch/savegames/{file_name}",
-  SHADERS_LIST      = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
+  SHADERS_LIST_PC   = "/archive/nintendo/switch/ryusak/shader_count_spirv.json",
+  SHADERS_LIST_MAC  = "/archive/nintendo/switch/ryusak/shader_count_macos.json",
   SHADERS_MIN_VER   = "/archive/nintendo/switch/ryusak/shader_min_version.txt",
-  SHADERS_ZIP       = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
+  SHADERS_ZIP_PC    = "/archive/nintendo/switch/shaders/SPIR-V/{title_id}.zip",
+  SHADERS_ZIP_MAC   = "/archive/nintendo/switch/shaders/macOS/{title_id}.zip",
   THRESHOLD         = "/archive/nintendo/switch/ryusak/threshold.txt",
 }
 
@@ -40,8 +42,11 @@ export enum OTHER_URLS {
 
 class HttpService {
   private httpsAgent: https.Agent;
+  private useMacUrl: boolean;
 
   constructor() {
+    this.useMacUrl = process.platform === "darwin";
+
     const cacheDir = fs.existsSync(path.resolve(app.getPath("exe"), "..", "portable"))
       ? path.resolve(app.getPath("exe"), "..", "electron_cache")
       : path.join(app.getPath("userData"));
@@ -118,6 +123,11 @@ class HttpService {
     );
   }
 
+  public async postShaders(body: PostShadersBody) {
+    if (this.useMacUrl) body.shaderType = "mac";
+    return this.postJSON(OTHER_URLS.SHADERS_POST, body);
+  }
+
   public async getWithProgress(path: string, destPath: string, mainWindow: BrowserWindow, eventName: string) {
     const url = new URL(path, CDN_URL);
     const fileStream = fs.createWriteStream(destPath);
@@ -159,8 +169,16 @@ class HttpService {
     }).catch(() => null);
   }
 
+  public async getShadersZipWithProgress(titleId: string, destPath: string, mainWindow: BrowserWindow) {
+    const shadersZipUrl = this.useMacUrl ? HTTP_PATHS.SHADERS_ZIP_MAC : HTTP_PATHS.SHADERS_ZIP_PC;
+    return this.getWithProgress(shadersZipUrl.replace("{title_id}", titleId), destPath, mainWindow, titleId);
+  }
+
   public async downloadRyujinxShaderList() {
-    return this.get(HTTP_PATHS.SHADERS_LIST) as Promise<RyusakShaders>;
+    return this.get(this.useMacUrl
+      ? HTTP_PATHS.SHADERS_LIST_MAC
+      : HTTP_PATHS.SHADERS_LIST_PC
+    ) as Promise<RyusakShaders>;
   }
 
   public async downloadSaveList() {
