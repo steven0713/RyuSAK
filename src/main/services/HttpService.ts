@@ -32,7 +32,7 @@ export enum OTHER_URLS {
   SHADERS_POST            = "https://ryusak.lewd.wtf/",
   RELEASE_INFO            = "https://api.github.com/repos/Ecks1337/RyuSAK/releases/latest",
   COMPAT_LIST             = "https://api.github.com/search/issues?q={query}%20repo:Ryujinx/Ryujinx-Games-List",
-  ESHOP_DATA              = "https://github.com/AdamK2003/titledb/releases/download/latest/titles.US.en.json",
+  ESHOP_DATA              = "https://github.com/arch-box/titledb/releases/download/latest/titles.US.en.json",
   GAME_BANANA_SEARCH_GAME = "https://api.gamebanana.com/Core/List/Like?itemtype=Game&field=name&match={match}",
   GAME_BANANA_SEARCH_MODS = "https://gamebanana.com/apiv10/Mod/Index?_nPage=1&_nPerpage=50&_sSort=Generic_MostDownloaded&_aFilters[Generic_Game]={id}",
   KEYS                    = "https://sigmapatches.coomer.party/prod.keys",
